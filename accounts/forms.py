@@ -3,7 +3,7 @@ from django import forms
 from accounts.models import User
 
 
-class RegisterForm(forms.ModelForm):
+class RegisterUserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
 
