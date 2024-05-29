@@ -1,0 +1,116 @@
+{% extends '_shared/_base.html' %}
+{% load static %}
+
+{% block title %}
+	User Registration
+{% endblock %}
+
+{% block content %}
+	<div class="main-section">
+			<div class="page-section nopadding cs-nomargin" style="margin-top: 0px;padding-top: 60px;padding-bottom: 60px;margin-bottom: 0px;">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+                            <h4 class="text-center" style="margin-bottom: 0;">WELCOME TO FooDie</h4>
+                            <p class="text-center">Please fill this form to get yourself onboarded in the FooDie marketplace.</p>
+                            <hr>
+                            <div id="restaurant-sets-holder">
+                                <form class="form-fields-set foodbakery-dev-restaurant-form" method="post" action="{% url 'registerUser' %}">
+                                    {% csrf_token %}
+                                    <ul class="register-add-restaurant-tab-container restaurant-information-tab-container">
+                                        <li>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="row">
+                                                        <ul>
+                                                            <li>
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.first_name.label }}</label>
+                                                                        {{ form.first_name }}
+                                                                        {% comment %}<input type="text" class="foodbakery-dev-req-field" id="foodbakery_restaurant_title_59054637" name="foodbakery_restaurant_title">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.last_name.label }}</label>
+                                                                        {{ form.last_name }}
+                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_phone_59054637" name="foodbakery_restaurant_contact_phone">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.email.label }}</label>
+                                                                        {{ form.email }}
+                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_contact_email_59054637" name="foodbakery_restaurant_contact_email">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.username.label }}</label>
+                                                                        {{ form.username }}
+                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_contact_email_59054637" name="foodbakery_restaurant_contact_email">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.password.label }}</label>
+                                                                        {{ form.password }}
+                                                                        {% comment %}<input type="password" name="foodbakery_restaurant_username" class="foodbakery-dev-username foodbakery-dev-req-field">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                                    <div class="field-holder">
+                                                                        <label>{{ form.confirm_password.label }}</label>
+                                                                        {{ form.confirm_password }}
+                                                                        {% comment %}<input type="password" name="foodbakery_restaurant_user_email" class="foodbakery-dev-user-email foodbakery-dev-req-field">{% endcomment %}
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                        <li>
+                                            <ul class="errorlist">
+                                                {% for field in form %}
+                                                	{% for error in field.errors %}
+                                                		<li style="color: red">{{ error }}</li>
+                                                	{% endfor %}
+                                                	
+                                                {% endfor %}
+
+                                            </ul>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-holder">
+                                                        <div class="payment-holder">
+                                                            <input type="submit" value="REGISTER" id="btn-next-restaurant-information" class="bgcolor">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    {% include 'alert/alert_messages.html' %}
+                                                </div>
+                                            </div>
+                                    </ul>
+                                </form>
+                            </div>
+                        </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+{% endblock %}

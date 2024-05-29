@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>FooDie - {% block title %}{% endblock %}</title>
+    {% include 'includes/head_references.html' %}
+</head>
+<body>
+	<!--Main Wrapper-->
+	<div class="wrapper">
+		<!-- Header Start -->
+		{% include 'includes/header_component.html' %}
+		<!-- Header End -->
+		<!-- Main Section Start -->
+		{% block content %}{% endblock %}
+		<!-- Main Section End -->
+		<!-- Footer Start -->
+		{% include 'includes/footer_component.html' %}
+		<!-- Footer End -->
+	</div>
+	<!-- Modal Popup End -->
+        {% include 'includes/footer_references.html' %}
+</body>
+</html>

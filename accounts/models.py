@@ -48,7 +48,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=12, blank=True)
     role = models.PositiveSmallIntegerField(
-        choices=ROLE_CHOICE, default=RESTAURANT, blank=True, null=True
+        choices=ROLE_CHOICE, default=CUSTOMER, blank=True, null=True
     )
     # required fields
     date_joined = models.DateTimeField(auto_now_add=True)
