@@ -17,3 +17,8 @@ class RegisterUserForm(forms.ModelForm):
         if password != confirm_password:
             raise forms.ValidationError("Passwords must match")
         return password
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)

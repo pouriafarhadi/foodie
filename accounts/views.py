@@ -1,11 +1,12 @@
-from django.contrib import messages
+from django.contrib import messages, auth
+from django.contrib.auth import login
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView, TemplateView, FormView
 
-from accounts.forms import RegisterUserForm
+from accounts.forms import RegisterUserForm, LoginForm
 from accounts.models import User, UserProfile
 from vendor.forms import RegisterRestaurantForm
 
@@ -58,3 +59,34 @@ class RestaurantRegistrationView(View):
             "accounts/register-restaurant-page.html",
             context={"uform": user_form, "rform": restaurant_form},
         )
+
+
+class LoginView(FormView):
+    template_name = "accounts/login-page.html"
+    form_class = LoginForm
+    success_url = "/accounts/dashboard/"
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        user = auth.authenticate(email=email, password=password)
+        if user is not None:
+            if user.is_active:
+                if user.check_password(password):
+                    auth.login(self.request, user=user)
+                    messages.success(self.request, "You are now logged in!")
+                    return super().form_valid(form)
+        form.add_error("email", "Invalid Credentials")
+        messages.error(self.request, "Invalid Credentials")
+        return self.form_invalid(form)
+
+
+class LogoutView(View):
+    def get(self, request):
+        auth.logout(request)
+        messages.info(request, "You have been logged out!")
+        return redirect(reverse("login"))
+
+
+class DashboardView(TemplateView):
+    template_name = "accounts/dashboard-page.html"
