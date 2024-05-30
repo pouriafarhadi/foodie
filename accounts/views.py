@@ -16,6 +16,12 @@ class UserRegistrationView(FormView):
     form_class = RegisterUserForm
     success_url = "/accounts/registerUser/"
 
+    def get(self, request: HttpRequest, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(request, "You are already logged in!")
+            return redirect(reverse("dashboard"))
+        return super().get(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.save(commit=False)
         userData = dict(**form.cleaned_data)
@@ -29,6 +35,11 @@ class UserRegistrationView(FormView):
 
 class RestaurantRegistrationView(View):
     def get(self, request):
+
+        if request.user.is_authenticated:
+            messages.info(request, "You are already logged in!")
+            return redirect(reverse("dashboard"))
+
         user_form = RegisterUserForm()
         restaurant_form = RegisterRestaurantForm()
         return render(
@@ -38,6 +49,7 @@ class RestaurantRegistrationView(View):
         )
 
     def post(self, request: HttpRequest):
+
         user_form = RegisterUserForm(request.POST)
         restaurant_form = RegisterRestaurantForm(request.POST, request.FILES)
         if user_form.is_valid() and restaurant_form.is_valid():
@@ -65,6 +77,12 @@ class LoginView(FormView):
     template_name = "accounts/login-page.html"
     form_class = LoginForm
     success_url = "/accounts/dashboard/"
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(request, "You are already logged in!")
+            return redirect(reverse("dashboard"))
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
