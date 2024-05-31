@@ -1,13 +1,17 @@
 from django.contrib import messages, auth
 from django.contrib.auth import login
+from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, TemplateView, FormView
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from accounts.forms import RegisterUserForm, LoginForm
 from accounts.models import User, UserProfile
+from accounts.utils import detectUser
 from vendor.forms import RegisterRestaurantForm
 
 
@@ -19,7 +23,7 @@ class UserRegistrationView(FormView):
     def get(self, request: HttpRequest, *args, **kwargs):
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("dashboard"))
+            return redirect(reverse("myAccount"))
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -38,7 +42,7 @@ class RestaurantRegistrationView(View):
 
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("dashboard"))
+            return redirect(reverse("myAccount"))
 
         user_form = RegisterUserForm()
         restaurant_form = RegisterRestaurantForm()
@@ -76,18 +80,19 @@ class RestaurantRegistrationView(View):
 class LoginView(FormView):
     template_name = "accounts/login-page.html"
     form_class = LoginForm
-    success_url = "/accounts/dashboard/"
+    success_url = "/accounts/myAccount/"
 
     def get(self, request: HttpRequest, *args, **kwargs):
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("dashboard"))
+            return redirect(reverse("myAccount"))
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         user = auth.authenticate(email=email, password=password)
+        print(user)
         if user is not None:
             if user.is_active:
                 if user.check_password(password):
@@ -106,5 +111,27 @@ class LogoutView(View):
         return redirect(reverse("login"))
 
 
-class DashboardView(TemplateView):
-    template_name = "accounts/dashboard-page.html"
+class VendorDashboard(TemplateView):
+    template_name = "accounts/vendorDashboard.html"
+
+    def get(self, request, *args, **kwargs):
+        # check if specific role want to see another role dashboard
+        if detectUser(request.user) != "vendorDashboard":
+            raise PermissionDenied
+        return super().get(request, *args, **kwargs)
+
+
+class CustDashboard(TemplateView):
+    template_name = "accounts/custDashboard.html"
+
+    def get(self, request, *args, **kwargs):
+        if detectUser(request.user) != "custDashboard":
+            raise PermissionDenied
+        return super().get(request, *args, **kwargs)
+
+
+class myAccount(View):
+    def get(self, request):
+        user = request.user
+        redirectUrl = detectUser(user)
+        return redirect(redirectUrl)

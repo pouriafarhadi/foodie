@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 from accounts import views
@@ -6,8 +7,11 @@ from accounts.views import (
     RestaurantRegistrationView,
     LoginView,
     LogoutView,
-    DashboardView,
+    myAccount,
+    CustDashboard,
+    VendorDashboard,
 )
+
 
 urlpatterns = [
     path(
@@ -31,8 +35,12 @@ urlpatterns = [
         name="logout",
     ),
     path(
-        "dashboard/",
-        DashboardView.as_view(),
-        name="dashboard",
+        "custDashboard/", login_required(CustDashboard.as_view()), name="custDashboard"
     ),
+    path(
+        "vendorDashboard/",
+        login_required(VendorDashboard.as_view()),
+        name="vendorDashboard",
+    ),
+    path("myAccount/", login_required(myAccount.as_view()), name="myAccount"),
 ]
