@@ -43,4 +43,12 @@ urlpatterns = [
         name="vendorDashboard",
     ),
     path("myAccount/", login_required(myAccount.as_view()), name="myAccount"),
+    path("activate/<uidb64>/<token>/", views.activate, name="activate"),
+    path("forgotPassword/", views.forgot_password, name="forgotPassword"),
+    path(
+        "resetPasswordValidate/<uidb64>/<token>/",
+        views.reset_password_validate,
+        name="reset_password_validate",
+    ),
+    path("resetPassword/", views.ResetPasswordView.as_view(), name="reset_password"),
 ]

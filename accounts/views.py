@@ -1,5 +1,6 @@
 from django.contrib import messages, auth
 from django.contrib.auth import login
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
@@ -8,10 +9,10 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, TemplateView, FormView
 from django.contrib.auth.decorators import login_required, user_passes_test
-
-from accounts.forms import RegisterUserForm, LoginForm
+from django.utils.http import urlsafe_base64_decode
+from accounts.forms import RegisterUserForm, LoginForm, ResetPasswordForm
 from accounts.models import User, UserProfile
-from accounts.utils import detectUser
+from accounts.utils import detectUser, send_mail
 from vendor.forms import RegisterRestaurantForm
 
 
@@ -33,6 +34,10 @@ class UserRegistrationView(FormView):
         user = User.objects.create_user(**userData)
         user.role = User.CUSTOMER
         user.save()
+        # send verification email
+        mail_subject = "Activation Account"
+        email_template = "accounts/emails/account-verification-mail.html"
+        send_mail(self.request, user, mail_subject, email_template)
         messages.success(self.request, "Your account has been created!")
         return super().form_valid(form)
 
@@ -66,6 +71,10 @@ class RestaurantRegistrationView(View):
             vendor.user = user
             vendor.user_profile = UserProfile.objects.get(user=user)
             vendor.save()
+            # send verification email
+            mail_subject = "Activation Account"
+            email_template = "accounts/emails/account-verification-mail.html"
+            send_mail(self.request, user, mail_subject, email_template)
             messages.success(
                 request, "Your account has been created! Please wait for the approval!"
             )
@@ -92,7 +101,6 @@ class LoginView(FormView):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         user = auth.authenticate(email=email, password=password)
-        print(user)
         if user is not None:
             if user.is_active:
                 if user.check_password(password):
@@ -135,3 +143,69 @@ class myAccount(View):
         user = request.user
         redirectUrl = detectUser(user)
         return redirect(redirectUrl)
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Congratulations! Your account is activated!")
+        return redirect(reverse("myAccount"))
+    else:
+        messages.error(request, "Invalid activation link")
+        return redirect(reverse("myAccount"))
+
+
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+
+            # send reset password email
+            mail_subject = "Reset Your Password"
+            email_template = "accounts/emails/reset-password-mail.html"
+            send_mail(request, user, mail_subject, email_template)
+            messages.success(
+                request, "password reset link has been sent to your email address"
+            )
+            return redirect(reverse("login"))
+        else:
+            messages.error(request, "Email doesn't exist!")
+    return render(request, "accounts/forgot-password-page.html")
+
+
+def reset_password_validate(request, uidb64, token):
+    # validate the user using uid and token
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session["uid"] = uid
+        messages.info(request, "please reset your password")
+        return redirect(reverse("reset_password"))
+    else:
+        messages.error(request, "this link has been expired")
+        return redirect(reverse("login"))
+
+
+class ResetPasswordView(FormView):
+    template_name = "accounts/reset-password-page.html"
+    form_class = ResetPasswordForm
+    success_url = "/accounts/login/"
+
+    def form_valid(self, form):
+        pk = self.request.session.get("uid")
+        user = User.objects.get(pk=pk)
+        user.set_password(form.cleaned_data["password"])
+        user.is_active = True
+        user.save()
+        messages.success(self.request, "Your password has been reset.")
+        return super().form_valid(form)
