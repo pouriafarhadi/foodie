@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.urls import path
+from django.urls import path, include
 
 from accounts import views
 from accounts.views import (
@@ -14,6 +14,7 @@ from accounts.views import (
 
 
 urlpatterns = [
+    path("", login_required(myAccount.as_view()), name="account"),
     path(
         "registerUser/",
         UserRegistrationView.as_view(),
@@ -51,4 +52,5 @@ urlpatterns = [
         name="reset_password_validate",
     ),
     path("resetPassword/", views.ResetPasswordView.as_view(), name="reset_password"),
+    path("vendor/", include("vendor.urls")),
 ]
