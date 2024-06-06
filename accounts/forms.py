@@ -1,6 +1,6 @@
 from django import forms
 
-from accounts.models import User
+from accounts.models import User, UserProfile
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -34,3 +34,25 @@ class ResetPasswordForm(forms.Form):
         if password != confirm_password:
             raise forms.ValidationError("Passwords must match")
         return password
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = [
+            "profile_picture",
+            "cover_photo",
+            "address_line_1",
+            "address_line_2",
+            "country",
+            "state",
+            "city",
+            "pincode",
+            "latitude",
+            "longitude",
+        ]
+
+        widgets = {
+            "profile_picture": forms.FileInput(attrs={"class": "btn btn-info"}),
+            "cover_photo": forms.FileInput(attrs={"class": "btn btn-info"}),
+        }
