@@ -99,8 +99,7 @@ class UserProfile(models.Model):
         upload_to="users/cover_photos", blank=True, null=True
     )
     bio = models.TextField(blank=True, null=True)
-    address_line_1 = models.CharField(max_length=100, blank=True, null=True)
-    address_line_2 = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=250, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
@@ -110,8 +109,8 @@ class UserProfile(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
-    def full_address(self):
-        return f" {self.address_line_1 if self.address_line_1 else '*'}, {self.address_line_2 if self.address_line_2 else '*'}"
+    # def full_address(self):
+    #     return f" {self.address_line_1 if self.address_line_1 else '*'}, {self.address_line_2 if self.address_line_2 else '*'}"
 
     def __str__(self):
         return self.user.email
