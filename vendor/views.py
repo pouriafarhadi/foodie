@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db.models import F
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib import messages
@@ -7,8 +8,14 @@ from django.contrib import messages
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
 from accounts.utils import detectUser
+from menu.models import Category, FoodItem
 from .forms import RegisterRestaurantForm
 from .models import Vendor
+
+
+def get_vendor(request):
+    vendor = Vendor.objects.get(user=request.user)
+    return vendor
 
 
 @login_required(login_url="login")
@@ -38,3 +45,30 @@ def vprofile(request):
         "vendor/vprofile-page.html",
         context={"profile_form": profile_form, "vendor_form": vendor_form},
     )
+
+
+class MenuBuilderView(View):
+    def get(self, request):
+        vendor = get_vendor(request)
+        categories = Category.objects.filter(vendor=vendor)
+        context = {"categories": categories}
+        return render(request, "vendor/menu-builder-page.html", context)
+
+
+class FoodItemByCategory(View):
+    def get(self, request, category_slug):
+        context = dict()
+        try:
+            vendor = get_vendor(request)
+            foodItems = FoodItem.objects.filter(
+                vendor=vendor, category__slug=category_slug
+            )
+            context = {
+                "foodItems": foodItems,
+                "category": foodItems.first().category,
+                "food_exist": True,
+            }
+        except:
+            messages.error(request, "no food items found! Add food item first")
+            context["food_exist"] = False
+        return render(request, "vendor/food-item-by-category-page.html", context)
