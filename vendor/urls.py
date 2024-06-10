@@ -33,4 +33,20 @@ urlpatterns = [
         login_required(views.FoodItemByCategory.as_view()),
         name="food-item-by-category",
     ),
+    # CRUD Food Item
+    path(
+        "menu-builder/food/add/",
+        login_required(views.AddFoodItem.as_view()),
+        name="add-food-item",
+    ),
+    path(
+        "menu-builder/food/edit/<slug:slug>/",
+        login_required(views.EditFoodItem.as_view()),
+        name="edit-food-item",
+    ),
+    path(
+        "menu-builder/food/delete/<slug:slug>/",
+        login_required(views.DeleteFoodItem.as_view()),
+        name="delete-food-item",
+    ),
 ]

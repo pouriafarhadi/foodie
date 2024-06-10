@@ -8,7 +8,7 @@ from django.views.generic import FormView, UpdateView
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
 from accounts.utils import checkIfItsVendor
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, FoodItemForm
 from menu.models import Category, FoodItem
 from .forms import RegisterRestaurantForm
 from .models import Vendor
@@ -102,20 +102,24 @@ class EditCategory(View):
         vendor = get_vendor(request)
         category = get_object_or_404(Category, slug=slug, vendor=vendor)
         form = CategoryForm(instance=category)
-        context = {"form": form}
+        context = {
+            "form": form,
+            "category": category,
+        }
         return render(request, "vendor/edit-category-page.html", context)
 
     def post(self, request, slug):
-        form = CategoryForm(request.POST or None)
-        context = {"form": form}
+        vendor = get_vendor(request)
+        category = get_object_or_404(Category, slug=slug, vendor=vendor)
+        form = CategoryForm(request.POST, instance=category)
         if form.is_valid():
-            vendor = get_vendor(request)
-            category = get_object_or_404(Category, slug=slug, vendor=vendor)
-            category.category_name = form.cleaned_data["category_name"]
-            category.description = form.cleaned_data["description"]
-            category.save()
+            form.save()
             messages.success(request, "You have successfully edited this category!")
             return redirect("menu-builder")
+        context = {
+            "form": form,
+            "category": category,
+        }
         return render(request, "vendor/edit-category-page.html", context)
 
 
@@ -132,4 +136,68 @@ class DeleteCategory(View):
 
 
 class AddFoodItem(FormView):
-    pass
+    template_name = "vendor/add-food-item-page.html"
+    form_class = FoodItemForm
+
+    def get(self, request, *args, **kwargs):
+        checkIfItsVendor(request)
+        return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        a = reverse("menu-builder")
+        messages.success(self.request, "You have successfully added a new food!")
+        return a
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        vendor = get_vendor(self.request)
+        return form_class(vendor=vendor, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.vendor = get_vendor(self.request)
+        try:
+            obj.save()
+        except IntegrityError:
+            messages.warning(self.request, "You have already added this food!")
+            return redirect("add-food-item")
+        return super().form_valid(form)
+
+
+class EditFoodItem(View):
+    def get(self, request, slug):
+        checkIfItsVendor(request)
+        vendor = get_vendor(request)
+        food = get_object_or_404(FoodItem, slug=slug, vendor=vendor)
+        form = FoodItemForm(instance=food)
+        context = {
+            "form": form,
+            "food": food,
+        }
+        return render(request, "vendor/edit-food-item-page.html", context)
+
+    def post(self, request, slug):
+        vendor = get_vendor(request)
+        food = get_object_or_404(FoodItem, slug=slug, vendor=vendor)
+        form = FoodItemForm(request.POST, instance=food)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "You have successfully edited this food!")
+            return redirect("menu-builder")
+        context = {
+            "form": form,
+            "food": food,
+        }
+        return render(request, "vendor/edit-food-item-page.html", context)
+
+
+class DeleteFoodItem(View):
+    def get(self, request, slug):
+        checkIfItsVendor(request)
+        vendor = get_vendor(request)
+        food = get_object_or_404(FoodItem, slug=slug, vendor=vendor)
+        name = food.food_name
+        food.delete()
+        messages.success(request, f"You have successfully deleted {name} food!")
+        return redirect("menu-builder")

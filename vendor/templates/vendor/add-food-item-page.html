@@ -1,0 +1,98 @@
+{% extends '_shared/_base.html' %}
+{% load static %}
+{% load thumbnail %}
+{% block title %}
+	Menu Builder
+{% endblock %}
+
+
+{% block content %}
+    <div class="main-section">
+        <!-- load cover photo here -->
+            {% include 'accounts/includes/vendor-dashboard-cover.html' %}
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <!-- load the sidebar here -->
+
+                            {% include 'accounts/includes/sidebar-dashboard-vendor.html' %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									<h5 class="text-uppercase">Build your menu Here!</h5>
+                                    <hr>
+									<h6>Add new food</h6>
+                                    <!-- render form -->
+                                    <form action="{% url 'add-food-item' %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+										<div class="form-fields-set">
+											<ul>
+												<li>
+													<div class="row">
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>Food name *</label>
+                                                                {{ form.food_name }}
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ form.category.label }} *</label>
+                                                                {{ form.category }}
+															</div>
+														</div>
+														<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ form.price.label }} *</label>
+                                                                {{ form.price }}
+															</div>
+														</div>
+														<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ form.is_available.label }}</label>
+                                                                {{ form.is_available }}
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="restaurant-info">
+																<div class="text-holder">
+																	<label>Add Food Image</label>
+																	<div class="upload-gallery">
+                                                                        {{ form.image }}
+																	</div>
+																</div>
+                                                                <label class="text-danger"> {{ form.image.errors }} </label>
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ form.description.label }}</label>
+                                                                {{ form.description }}
+															</div>
+														</div>
+
+
+
+													</div>
+												</li>
+											</ul>
+											<div>
+												<div class="field-holder">
+													<div class="payment-holder input-button-loader">
+														<button type="submit" class="btn btn-info"><i class="bi bi-check-lg"> </i>Create</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    {% include 'alert/alert_messages.html' %}
+{% endblock %}
