@@ -19,6 +19,16 @@ urlpatterns = [
         name="add-category",
     ),
     path(
+        "menu-builder/category/edit/<slug:slug>",
+        login_required(views.EditCategory.as_view()),
+        name="edit-category",
+    ),
+    path(
+        "menu-builder/category/delete/<slug:slug>",
+        login_required(views.DeleteCategory.as_view()),
+        name="delete-category",
+    ),
+    path(
         "menu-builder/category/<slug:category_slug>/",
         login_required(views.FoodItemByCategory.as_view()),
         name="food-item-by-category",

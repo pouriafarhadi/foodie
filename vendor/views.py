@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.contrib import messages
-from django.views.generic import FormView
+from django.views.generic import FormView, UpdateView
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
 from accounts.utils import checkIfItsVendor
@@ -75,7 +75,6 @@ class FoodItemByCategory(View):
 class AddCategory(FormView):
     def get(self, request, *args, **kwargs):
         checkIfItsVendor(request)
-        print("hii")
         return super().get(request, *args, **kwargs)
 
     template_name = "vendor/add-category-page.html"
@@ -95,3 +94,42 @@ class AddCategory(FormView):
             messages.warning(self.request, "You have already added this category!")
             return redirect("add-category")
         return super().form_valid(form)
+
+
+class EditCategory(View):
+    def get(self, request, slug):
+        checkIfItsVendor(request)
+        vendor = get_vendor(request)
+        category = get_object_or_404(Category, slug=slug, vendor=vendor)
+        form = CategoryForm(instance=category)
+        context = {"form": form}
+        return render(request, "vendor/edit-category-page.html", context)
+
+    def post(self, request, slug):
+        form = CategoryForm(request.POST or None)
+        context = {"form": form}
+        if form.is_valid():
+            vendor = get_vendor(request)
+            category = get_object_or_404(Category, slug=slug, vendor=vendor)
+            category.category_name = form.cleaned_data["category_name"]
+            category.description = form.cleaned_data["description"]
+            category.save()
+            messages.success(request, "You have successfully edited this category!")
+            return redirect("menu-builder")
+        return render(request, "vendor/edit-category-page.html", context)
+
+
+class DeleteCategory(View):
+    def get(self, request, slug):
+
+        checkIfItsVendor(request)
+        vendor = get_vendor(request)
+        category = get_object_or_404(Category, slug=slug, vendor=vendor)
+        name = category.category_name
+        category.delete()
+        messages.success(request, f"You have successfully deleted {name} category!")
+        return redirect("menu-builder")
+
+
+class AddFoodItem(FormView):
+    pass
