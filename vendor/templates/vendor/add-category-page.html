@@ -1,0 +1,68 @@
+{% extends '_shared/_base.html' %}
+{% load static %}
+{% load thumbnail %}
+{% block title %}
+	Menu Builder
+{% endblock %}
+
+
+{% block content %}
+    <div class="main-section">
+        <!-- load cover photo here -->
+            {% include 'accounts/includes/vendor-dashboard-cover.html' %}
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <!-- load the sidebar here -->
+
+                            {% include 'accounts/includes/sidebar-dashboard-vendor.html' %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									<h5 class="text-uppercase">Build your menu Here!</h5>
+                                    <hr>
+									<h6>Add new category</h6>
+                                    <!-- render form -->
+                                    <form action="{% url 'add-category' %}" method="post">
+	                                    {% csrf_token %}
+	                                    <ul>
+		                                    <li>
+	                                            <div class="form-fields-set">
+	                                           <div class="row">
+	                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	                                                    <div class="field-holder">
+	                                                        <label>{{ form.category_name.label }} *</label>
+	                                                        {{ form.category_name }}
+	                                                    </div>
+	                                                </div>
+	                                           </div>
+
+	                                        </div>
+		                                    </li>
+		                                    <li>
+	                                            <div class="form-fields-set">
+	                                           <div class="row">
+	                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	                                                    <div class="field-holder">
+	                                                        <label class="text-muted">{{ form.description.label }}</label>
+	                                                        {{ form.description }}
+	                                                    </div>
+	                                                </div>
+	                                           </div>
+
+	                                        </div>
+		                                    </li>
+	                                        <button type="submit" class="btn btn-info"><i class="bi bi-plus"></i>Create</button>
+	                                    </ul>
+                                    </form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    {% include 'alert/alert_messages.html' %}
+{% endblock %}

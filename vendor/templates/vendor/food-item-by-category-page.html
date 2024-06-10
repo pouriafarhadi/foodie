@@ -23,6 +23,7 @@
 								<div class="user-holder">
 									<h5 class="text-uppercase">Build your menu Here!</h5>
                                     <hr>
+									<a href="{% url 'menu-builder' %}"><button class="btn btn-secondary" ><i class="bi bi-arrow-left"> </i>Back</button></a>
 									<h6>Category: <span class="text-uppercase text-success">{{ category.category_name }}</span></h6>
                                 {% if food_exist %}
                                 	<table class="table table-hover table-borderless">

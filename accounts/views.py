@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.http import urlsafe_base64_decode
 from accounts.forms import RegisterUserForm, LoginForm, ResetPasswordForm
 from accounts.models import User, UserProfile
-from accounts.utils import detectUser, send_mail
+from accounts.utils import detectUser, send_mail, checkIfItsCustomer, checkIfItsVendor
 from vendor.forms import RegisterRestaurantForm
 
 
@@ -124,8 +124,7 @@ class VendorDashboard(TemplateView):
 
     def get(self, request, *args, **kwargs):
         # check if specific role want to see another role dashboard
-        if detectUser(request.user) != "vendorDashboard":
-            raise PermissionDenied
+        checkIfItsVendor(request)
         return super().get(request, *args, **kwargs)
 
 
@@ -133,8 +132,7 @@ class CustDashboard(TemplateView):
     template_name = "accounts/custDashboard.html"
 
     def get(self, request, *args, **kwargs):
-        if detectUser(request.user) != "custDashboard":
-            raise PermissionDenied
+        checkIfItsCustomer(request)
         return super().get(request, *args, **kwargs)
 
 

@@ -12,6 +12,12 @@ urlpatterns = [
         login_required(views.MenuBuilderView.as_view()),
         name="menu-builder",
     ),
+    # Category CRUD
+    path(
+        "menu-builder/category/add/",
+        login_required(views.AddCategory.as_view()),
+        name="add-category",
+    ),
     path(
         "menu-builder/category/<slug:category_slug>/",
         login_required(views.FoodItemByCategory.as_view()),

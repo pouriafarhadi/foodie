@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
@@ -42,3 +43,13 @@ def send_notification(mail_subject, mail_template, context):
     to_email = context.get("user").email
     mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
     mail.send()
+
+
+def checkIfItsVendor(request):
+    if detectUser(request.user) != "vendorDashboard":
+        raise PermissionDenied
+
+
+def checkIfItsCustomer(request):
+    if detectUser(request.user) != "custDashboard":
+        raise PermissionDenied

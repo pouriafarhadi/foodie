@@ -1,21 +1,18 @@
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.db.models import F
+from django.db import IntegrityError
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views import View
 from django.contrib import messages
-
+from django.views.generic import FormView
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
-from accounts.utils import detectUser
+from accounts.utils import checkIfItsVendor
+from menu.forms import CategoryForm
 from menu.models import Category, FoodItem
 from .forms import RegisterRestaurantForm
 from .models import Vendor
-
-
-def get_vendor(request):
-    vendor = Vendor.objects.get(user=request.user)
-    return vendor
+from .utils import get_vendor
 
 
 @login_required(login_url="login")
@@ -24,8 +21,7 @@ def vprofile(request):
     vendor = get_object_or_404(Vendor, user=request.user)
 
     if request.method == "GET":
-        if detectUser(request.user) != "vendorDashboard":
-            raise PermissionDenied
+        checkIfItsVendor(request)
         profile_form = UserProfileForm(instance=profile)
         vendor_form = RegisterRestaurantForm(instance=vendor)
 
@@ -49,6 +45,7 @@ def vprofile(request):
 
 class MenuBuilderView(View):
     def get(self, request):
+        checkIfItsVendor(request)
         vendor = get_vendor(request)
         categories = Category.objects.filter(vendor=vendor)
         context = {"categories": categories}
@@ -57,6 +54,7 @@ class MenuBuilderView(View):
 
 class FoodItemByCategory(View):
     def get(self, request, category_slug):
+        checkIfItsVendor(request)
         context = dict()
         try:
             vendor = get_vendor(request)
@@ -69,6 +67,31 @@ class FoodItemByCategory(View):
                 "food_exist": True,
             }
         except:
-            messages.error(request, "no food items found! Add food item first")
+            messages.info(request, "no food items found! Add food item first")
             context["food_exist"] = False
         return render(request, "vendor/food-item-by-category-page.html", context)
+
+
+class AddCategory(FormView):
+    def get(self, request, *args, **kwargs):
+        checkIfItsVendor(request)
+        print("hii")
+        return super().get(request, *args, **kwargs)
+
+    template_name = "vendor/add-category-page.html"
+    form_class = CategoryForm
+
+    def get_success_url(self):
+        a = reverse("menu-builder")
+        messages.success(self.request, "You have successfully added a new category!")
+        return a
+
+    def form_valid(self, form):
+        a = form.save(commit=False)
+        a.vendor = get_vendor(self.request)
+        try:
+            a.save()
+        except IntegrityError:
+            messages.warning(self.request, "You have already added this category!")
+            return redirect("add-category")
+        return super().form_valid(form)
