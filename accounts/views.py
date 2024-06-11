@@ -19,12 +19,12 @@ from vendor.forms import RegisterRestaurantForm
 class UserRegistrationView(FormView):
     template_name = "accounts/register-user-page.html"
     form_class = RegisterUserForm
-    success_url = "/accounts/registerUser/"
+    success_url = "/registerUser/"
 
     def get(self, request: HttpRequest, *args, **kwargs):
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("myAccount"))
+            return redirect(reverse("my-Account"))
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -47,7 +47,7 @@ class RestaurantRegistrationView(View):
 
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("myAccount"))
+            return redirect(reverse("my-Account"))
 
         user_form = RegisterUserForm()
         restaurant_form = RegisterRestaurantForm()
@@ -89,12 +89,12 @@ class RestaurantRegistrationView(View):
 class LoginView(FormView):
     template_name = "accounts/login-page.html"
     form_class = LoginForm
-    success_url = "/accounts/myAccount/"
+    success_url = "/myAccount/"
 
     def get(self, request: HttpRequest, *args, **kwargs):
         if request.user.is_authenticated:
             messages.info(request, "You are already logged in!")
-            return redirect(reverse("myAccount"))
+            return redirect(reverse("my-Account"))
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -108,7 +108,7 @@ class LoginView(FormView):
                     messages.success(self.request, "You are now logged in!")
                     return super().form_valid(form)
         form.add_error("email", "Invalid Credentials")
-        messages.error(self.request, "Invalid Credentials")
+        messages.warning(self.request, "Invalid Credentials")
         return self.form_invalid(form)
 
 
@@ -140,7 +140,7 @@ class myAccount(View):
     def get(self, request):
         user = request.user
         redirectUrl = detectUser(user)
-        return redirect(redirectUrl)
+        return redirect(reverse(redirectUrl))
 
 
 def activate(request, uidb64, token):
@@ -153,10 +153,10 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, "Congratulations! Your account is activated!")
-        return redirect(reverse("myAccount"))
+        return redirect(reverse("my-Account"))
     else:
-        messages.error(request, "Invalid activation link")
-        return redirect(reverse("myAccount"))
+        messages.warning(request, "Invalid activation link")
+        return redirect(reverse("my-Account"))
 
 
 def forgot_password(request):
@@ -174,7 +174,7 @@ def forgot_password(request):
             )
             return redirect(reverse("login"))
         else:
-            messages.error(request, "Email doesn't exist!")
+            messages.warning(request, "Email doesn't exist!")
     return render(request, "accounts/forgot-password-page.html")
 
 
@@ -190,14 +190,14 @@ def reset_password_validate(request, uidb64, token):
         messages.info(request, "please reset your password")
         return redirect(reverse("reset_password"))
     else:
-        messages.error(request, "this link has been expired")
+        messages.warning(request, "this link has been expired")
         return redirect(reverse("login"))
 
 
 class ResetPasswordView(FormView):
     template_name = "accounts/reset-password-page.html"
     form_class = ResetPasswordForm
-    success_url = "/accounts/login/"
+    success_url = "/login/"
 
     def form_valid(self, form):
         pk = self.request.session.get("uid")

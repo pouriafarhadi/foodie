@@ -37,9 +37,14 @@
 																		<li class="gal-img">
 																			<div class="drag-list">
 																				<div class="item-thumb">
-                                                                                    {% thumbnail profile_form.instance.profile_picture "100x100" crop='center' quality=90 as im %}
+																				{% if profile_form.instance.profile_picture %}
+																					{% thumbnail profile_form.instance.profile_picture "100x100" crop='center' quality=90 as im %}
                                                                                         <img class="thumbnail" src="{{ im.url }}" alt="">
-                                                                                    {% endthumbnail %}																				</div>
+                                                                                    {% endthumbnail %}
+																				{% else %}
+																					<img class="thumbnail" src="{% static 'extra-images/profile-picture-1.PNG' %}" alt="">
+																				{% endif %}
+                                                                                    																				</div>
 																			</div>
 																		</li>
 																	</ul>
@@ -61,9 +66,14 @@
 																		<li class="gal-img">
 																			<div class="drag-list">
 																				<div class="item-thumb">
-                                                                                    {% thumbnail profile_form.instance.cover_photo "100x100" crop='center' quality=90 as im %}
+																				{% if profile_form.instance.cover_photo %}
+																					{% thumbnail profile_form.instance.cover_photo "100x100" crop='center' quality=90 as im %}
                                                                                         <img class="thumbnail" src="{{ im.url }}" alt="">
-                                                                                    {% endthumbnail %}																				</div>
+                                                                                    {% endthumbnail %}
+																				{% else %}
+																					<img class="thumbnail" src="{% static 'extra-images/cover-photo-1.PNG' %}" alt="">
+																				{% endif %}
+                                                                                    																				</div>
 																			</div>
 																		</li>
 																	</ul>

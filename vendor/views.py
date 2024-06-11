@@ -136,6 +136,7 @@ class DeleteCategory(View):
 
 
 class AddFoodItem(FormView):
+    category_slug_for_url = None
     template_name = "vendor/add-food-item-page.html"
     form_class = FoodItemForm
 
@@ -144,7 +145,7 @@ class AddFoodItem(FormView):
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        a = reverse("menu-builder")
+        a = reverse("food-item-by-category", args=[self.category_slug_for_url])
         messages.success(self.request, "You have successfully added a new food!")
         return a
 
@@ -159,6 +160,7 @@ class AddFoodItem(FormView):
         obj.vendor = get_vendor(self.request)
         try:
             obj.save()
+            self.category_slug_for_url = obj.category.slug
         except IntegrityError:
             messages.warning(self.request, "You have already added this food!")
             return redirect("add-food-item")
@@ -184,7 +186,7 @@ class EditFoodItem(View):
         if form.is_valid():
             form.save()
             messages.success(request, "You have successfully edited this food!")
-            return redirect("menu-builder")
+            return redirect(reverse("food-item-by-category", args=[food.category.slug]))
         context = {
             "form": form,
             "food": food,
@@ -198,6 +200,7 @@ class DeleteFoodItem(View):
         vendor = get_vendor(request)
         food = get_object_or_404(FoodItem, slug=slug, vendor=vendor)
         name = food.food_name
+        slug = food.category.slug
         food.delete()
         messages.success(request, f"You have successfully deleted {name} food!")
-        return redirect("menu-builder")
+        return redirect(reverse("food-item-by-category", args=[slug]))

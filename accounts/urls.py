@@ -43,7 +43,11 @@ urlpatterns = [
         login_required(VendorDashboard.as_view()),
         name="vendorDashboard",
     ),
-    path("myAccount/", login_required(myAccount.as_view()), name="myAccount"),
+    path(
+        "myAccount/",
+        login_required(myAccount.as_view(), login_url="/login/"),
+        name="my-Account",
+    ),
     path("activate/<uidb64>/<token>/", views.activate, name="activate"),
     path("forgotPassword/", views.forgot_password, name="forgotPassword"),
     path(

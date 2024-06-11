@@ -1,7 +1,7 @@
 <div class="user-account-nav user-account-sidebar">
     <div class="user-nav-list">
         <ul>
-            <li class="{% if request.path == '/accounts/vendorDashboard/' or request.path == '/accounts/vendor/' %} active {% endif %}">
+            <li class="{% if request.path == '/vendorDashboard/' or request.path == '/vendor/' %} active {% endif %}">
                 <a href="{% url 'vendorDashboard' %}"><i class="icon-dashboard3"></i>Dashboard</a>
             </li>
             <li class="{% if 'profile' in request.path %} active {% endif %}">
