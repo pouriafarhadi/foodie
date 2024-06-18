@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.HomeView.as_view(), name="home-page"),
     path("", include("accounts.urls")),
+    path("marketplace/", include("marketplace.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

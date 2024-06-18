@@ -172,7 +172,7 @@ class EditFoodItem(View):
         checkIfItsVendor(request)
         vendor = get_vendor(request)
         food = get_object_or_404(FoodItem, slug=slug, vendor=vendor)
-        form = FoodItemForm(instance=food)
+        form = FoodItemForm(vendor=vendor, instance=food)
         context = {
             "form": form,
             "food": food,
