@@ -82,6 +82,3 @@ class AddToCart(View):
             return JsonResponse(
                 {"status": "Failed", "message": "Please login to continue"}
             )
-
-
-
