@@ -7,4 +7,5 @@ urlpatterns = [
     path(
         "<slug:slug>/", views.MarketplaceDetailView.as_view(), name="detail-marketplace"
     ),
+    path("add_to_cart/<int:food_id>/", views.AddToCart.as_view(), name="add-to-cart"),
 ]

@@ -1,7 +1,9 @@
 from django.db.models import Count, Prefetch
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, View
 
+from marketplace.models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
 
@@ -11,6 +13,7 @@ class MarketplaceView(ListView):
     model = Vendor
     context_object_name = "vendors"
     paginate_by = 1
+    ordering = "id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,3 +41,47 @@ class MarketplaceDetailView(TemplateView):
         context["vendor"] = vendor
         context["categories"] = categories
         return context
+
+
+class AddToCart(View):
+    def get(self, request: HttpRequest, food_id):
+        if request.user.is_authenticated:
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                # Check if the food item exists
+                try:
+                    fooditem = FoodItem.objects.get(id=food_id)
+                    # Check if the user has already added that food item to the cart
+                    try:
+                        chkCart = Cart.objects.get(user=request.user, fooditem=fooditem)
+                        # Increase the Cart quantity
+                        chkCart.quantity += 1
+                        chkCart.save()
+                        return JsonResponse(
+                            {
+                                "status": "success",
+                                "message": "increased the food quantity!",
+                            }
+                        )
+                    except:
+                        chkCart = Cart.objects.create(
+                            user=request.user, fooditem=fooditem, quantity=1
+                        )
+                        return JsonResponse(
+                            {
+                                "status": "success",
+                                "message": "Added the food to the Cart",
+                            }
+                        )
+                except:
+                    return JsonResponse(
+                        {"status": "Failed", "message": "This food does not exist"}
+                    )
+            else:
+                return JsonResponse({"status": "Failed", "message": "Invalid request"})
+        else:
+            return JsonResponse(
+                {"status": "Failed", "message": "Please login to continue"}
+            )
+
+
+
