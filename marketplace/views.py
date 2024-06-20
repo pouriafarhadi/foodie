@@ -2,11 +2,12 @@ from django.db.models import Count, Prefetch
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView, View
-
+from django.contrib import messages
 from marketplace.context_processors import get_cart_counter
 from marketplace.models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
+import sweetify
 
 
 class MarketplaceView(ListView):
@@ -89,6 +90,53 @@ class AddToCart(View):
             else:
                 return JsonResponse({"status": "Failed", "message": "Invalid request"})
         else:
+            # todo : use sweetalert to show message that they should login first
             return JsonResponse(
-                {"status": "Failed", "message": "Please login to continue"}
+                {"status": "login_required", "message": "Please login to continue"}
+            )
+
+
+class DecreaseCart(View):
+    def get(self, request: HttpRequest, food_id):
+        if request.user.is_authenticated:
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                # Check if the food item exists
+                try:
+                    fooditem = FoodItem.objects.get(id=food_id)
+                    # Check if the user has already added that food item to the cart
+                    try:
+                        chkCart = Cart.objects.get(user=request.user, fooditem=fooditem)
+                        # Decrease the Cart quantity
+                        if chkCart.quantity > 1:
+                            # Decrease the cart quantity
+                            chkCart.quantity -= 1
+                            chkCart.save()
+
+                        else:
+                            chkCart.delete()
+                            chkCart.quantity = 0
+                        return JsonResponse(
+                            {
+                                "status": "success",
+                                "message": "Decreased the food quantity!",
+                                "cart_counter": get_cart_counter(request),
+                                "qty": chkCart.quantity,
+                            }
+                        )
+                    except:
+                        return JsonResponse(
+                            {
+                                "status": "Failed",
+                                "message": "you don't have any fooditem in your cart",
+                            }
+                        )
+                except:
+                    return JsonResponse(
+                        {"status": "Failed", "message": "This food does not exist"}
+                    )
+            else:
+                return JsonResponse({"status": "Failed", "message": "Invalid request"})
+        else:
+            return JsonResponse(
+                {"status": "login_required", "message": "Please login to continue"}
             )

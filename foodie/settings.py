@@ -44,7 +44,10 @@ INSTALLED_APPS = [
     "vendor",
     "menu",
     "sorl.thumbnail",
+    "sweetify",
 ]
+
+SWEETIFY_SWEETALERT_LIBRARY = "sweetalert2"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
