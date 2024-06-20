@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView, View
 
+from marketplace.context_processors import get_cart_counter
 from marketplace.models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
@@ -38,8 +39,13 @@ class MarketplaceDetailView(TemplateView):
         categories = Category.objects.filter(vendor=vendor).prefetch_related(
             Prefetch("food_items", queryset=FoodItem.objects.filter(is_available=True))
         )
+        if self.request.user.is_authenticated:
+            cart_items = Cart.objects.filter(user=self.request.user)
+        else:
+            cart_items = None
         context["vendor"] = vendor
         context["categories"] = categories
+        context["cart_items"] = cart_items
         return context
 
 
@@ -60,6 +66,8 @@ class AddToCart(View):
                             {
                                 "status": "success",
                                 "message": "increased the food quantity!",
+                                "cart_counter": get_cart_counter(request),
+                                "qty": chkCart.quantity,
                             }
                         )
                     except:
@@ -70,6 +78,8 @@ class AddToCart(View):
                             {
                                 "status": "success",
                                 "message": "Added the food to the Cart",
+                                "cart_counter": get_cart_counter(request),
+                                "qty": chkCart.quantity,
                             }
                         )
                 except:
