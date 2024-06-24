@@ -3,14 +3,14 @@ from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView, View
 from django.contrib import messages
-from marketplace.context_processors import get_cart_counter
+from marketplace.context_processors import get_cart_counter, get_cart_amounts
 from marketplace.models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
-import sweetify
 
 
 class MarketplaceView(ListView):
+
     template_name = "marketplace/listings.html"
     model = Vendor
     context_object_name = "vendors"
@@ -69,6 +69,7 @@ class AddToCart(View):
                                 "message": "increased the food quantity!",
                                 "cart_counter": get_cart_counter(request),
                                 "qty": chkCart.quantity,
+                                "cart_amount": get_cart_amounts(request),
                             }
                         )
                     except:
@@ -81,6 +82,7 @@ class AddToCart(View):
                                 "message": "Added the food to the Cart",
                                 "cart_counter": get_cart_counter(request),
                                 "qty": chkCart.quantity,
+                                "cart_amount": get_cart_amounts(request),
                             }
                         )
                 except:
@@ -90,7 +92,7 @@ class AddToCart(View):
             else:
                 return JsonResponse({"status": "Failed", "message": "Invalid request"})
         else:
-            # todo : use sweetalert to show message that they should login first
+
             return JsonResponse(
                 {"status": "login_required", "message": "Please login to continue"}
             )
@@ -121,6 +123,7 @@ class DecreaseCart(View):
                                 "message": "Decreased the food quantity!",
                                 "cart_counter": get_cart_counter(request),
                                 "qty": chkCart.quantity,
+                                "cart_amount": get_cart_amounts(request),
                             }
                         )
                     except:
@@ -133,6 +136,46 @@ class DecreaseCart(View):
                 except:
                     return JsonResponse(
                         {"status": "Failed", "message": "This food does not exist"}
+                    )
+            else:
+                return JsonResponse({"status": "Failed", "message": "Invalid request"})
+        else:
+            return JsonResponse(
+                {"status": "login_required", "message": "Please login to continue"}
+            )
+
+
+class CartView(TemplateView):
+    template_name = "marketplace/cart-page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        user_carts = Cart.objects.filter(user=user).order_by("created_at")
+        context["carts"] = user_carts
+        return context
+
+
+class DeleteCart(View):
+    def get(self, request: HttpRequest, cart_id):
+        if request.user.is_authenticated:
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                try:
+                    # Check if the cart item exists
+                    cart_item = Cart.objects.get(user=request.user, id=cart_id)
+                    if cart_item:
+                        cart_item.delete()
+                        return JsonResponse(
+                            {
+                                "status": "Success",
+                                "message": "Card deleted",
+                                "cart_counter": get_cart_counter(request),
+                                "cart_amount": get_cart_amounts(request),
+                            }
+                        )
+                except:
+                    return JsonResponse(
+                        {"status": "Failed", "message": "This cart does not exist"}
                     )
             else:
                 return JsonResponse({"status": "Failed", "message": "Invalid request"})

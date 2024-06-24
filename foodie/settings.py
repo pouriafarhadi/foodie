@@ -44,10 +44,8 @@ INSTALLED_APPS = [
     "vendor",
     "menu",
     "sorl.thumbnail",
-    "sweetify",
 ]
 
-SWEETIFY_SWEETALERT_LIBRARY = "sweetalert2"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -74,6 +72,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "accounts.context_processors.get_vendor",
                 "marketplace.context_processors.get_cart_counter",
+                "marketplace.context_processors.get_cart_amounts",
             ],
         },
     },

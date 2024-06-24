@@ -145,7 +145,8 @@
 											{% endfor %}
 
 										{% for cart_item in cart_items %}
-											<span id="qty-{{ cart_item.fooditem.id }}" class="item_qty" data-qty="{{ cart_item.quantity }}">{{ cart_item.quantity }}</span>
+											<span id="qty-{{ cart_item.fooditem.id }}" class="item_qty" data-qty="{{ cart_item.quantity }}">
+											</span>
 
 										{% endfor %}
 										
