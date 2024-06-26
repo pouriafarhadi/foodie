@@ -34,7 +34,7 @@ class Vendor(models.Model):
                     mail_subject = "We're sorry, you are not eligible for publishing your food menu on our marketplace !"
                     send_notification(mail_subject, mail_template, context)
         if not self.vendor_slug:
-            self.vendor_slug = slugify(self.vendor_name) + f"-{str(self.pk + 4545)}"
+            self.vendor_slug = slugify(self.vendor_name)
 
         return super().save(*args, **kwargs)
 

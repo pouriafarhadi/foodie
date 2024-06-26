@@ -1,6 +1,6 @@
-from django.db.models import Count, Prefetch
-from django.http import HttpResponse, JsonResponse, HttpRequest
-from django.shortcuts import render
+from django.db.models import Count, Prefetch, Q
+from django.http import HttpResponse, JsonResponse, HttpRequest, Http404
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, TemplateView, View
 from django.contrib import messages
 from marketplace.context_processors import get_cart_counter, get_cart_amounts
@@ -14,7 +14,7 @@ class MarketplaceView(ListView):
     template_name = "marketplace/listings.html"
     model = Vendor
     context_object_name = "vendors"
-    paginate_by = 1
+    paginate_by = 3
     ordering = "id"
 
     def get_context_data(self, **kwargs):
@@ -183,3 +183,32 @@ class DeleteCart(View):
             return JsonResponse(
                 {"status": "login_required", "message": "Please login to continue"}
             )
+
+
+def search(request):
+    restaurant_name = request.GET.get("res_name")
+    food_name = request.GET.get("food_name")
+    location = request.GET.get("location")
+    if restaurant_name or food_name or location:
+        fetch_vendors_by_fooditem = FoodItem.objects.filter(
+            (
+                Q(food_name__icontains=food_name)
+                | Q(category__category_name__icontains=food_name)
+            )
+            & Q(is_available=True)
+        ).values_list("vendor", flat=True)
+        print(fetch_vendors_by_fooditem)
+        vendors = Vendor.objects.filter(
+            Q(id__in=fetch_vendors_by_fooditem)
+            & Q(
+                vendor_name__icontains=restaurant_name,
+                is_approved=True,
+                user__is_active=True,
+            )
+        )
+
+        context = {"vendors": vendors, "vendors_count": vendors.count()}
+        return render(request, "marketplace/listings.html", context)
+    else:
+        messages.info(request, "Please enter restaurant name or food name or location")
+        return redirect("home-page")
