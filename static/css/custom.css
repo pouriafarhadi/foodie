@@ -19,3 +19,6 @@
     cursor: pointer;
 }
 
+form#opening_hours select{
+    padding: 4px 4px !important;
+}

@@ -8,6 +8,21 @@ urlpatterns = [
     path("", login_required(accounts_views.VendorDashboard.as_view())),
     path("profile/", views.vprofile, name="vprofile"),
     path(
+        "opening_hours/",
+        login_required(views.OpeningHourView.as_view()),
+        name="opening-hours",
+    ),
+    path(
+        "opening_hours/add/",
+        views.addingopeninghours,
+        name="opening-hours-add",
+    ),
+    path(
+        "opening_hours/remove/<int:pk>/",
+        views.removeopeninghour,
+        name="opening-hours-remove",
+    ),
+    path(
         "menu-builder/",
         login_required(views.MenuBuilderView.as_view()),
         name="menu-builder",

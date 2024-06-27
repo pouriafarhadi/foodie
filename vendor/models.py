@@ -1,3 +1,5 @@
+from datetime import time
+
 from django.db import models
 from django.utils.text import slugify
 
@@ -40,3 +42,37 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.vendor_name
+
+
+DAYS = [
+    (1, "monday"),
+    (2, "tuesday"),
+    (3, "wednesday"),
+    (4, "thursday"),
+    (5, "friday"),
+    (6, "saturday"),
+    (7, "sunday"),
+]
+
+HOURS_OF_DAY_24 = [
+    (time(h, m).strftime("%I:%M %p"), time(h, m).strftime("%I:%M %p"))
+    for h in range(0, 24)
+    for m in [0, 30]
+]
+
+
+class OpeningHours(models.Model):
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.CASCADE, related_name="opening_hours"
+    )
+    day = models.IntegerField(choices=DAYS)
+    from_hour = models.CharField(choices=HOURS_OF_DAY_24, max_length=20, blank=True)
+    to_hour = models.CharField(choices=HOURS_OF_DAY_24, max_length=20, blank=True)
+    is_closed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.get_day_display()
+
+    class Meta:
+        ordering = ("day", "-from_hour")
+        unique_together = ("vendor", "day", "from_hour", "to_hour")
