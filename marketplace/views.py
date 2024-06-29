@@ -5,9 +5,12 @@ from django.http import HttpResponse, JsonResponse, HttpRequest, Http404
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, TemplateView, View
 from django.contrib import messages
+
+from accounts.models import UserProfile
 from marketplace.context_processors import get_cart_counter, get_cart_amounts
 from marketplace.models import Cart
 from menu.models import Category, FoodItem
+from order.forms import OrderForm
 from vendor.models import Vendor, OpeningHours
 
 
@@ -221,3 +224,29 @@ def search(request):
     else:
         messages.info(request, "Please enter restaurant name or food name or location")
         return redirect("home-page")
+
+
+class Checkout(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+
+            carts = Cart.objects.filter(user=request.user).order_by("created_at")
+            cart_count = carts.count()
+            if cart_count <= 0:
+                return redirect("marketplace")
+            user_profile = UserProfile.objects.get(user=request.user)
+            default_values = {
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "phone": request.user.phone_number,
+                "email": request.user.email,
+                "address": user_profile.address,
+                "country": user_profile.country,
+                "state": user_profile.state,
+                "city": user_profile.city,
+            }
+            form = OrderForm(initial=default_values)
+            context = {"form": form, "carts": carts}
+            return render(request, "marketplace/checkout-page.html", context)
+        else:
+            raise Http404

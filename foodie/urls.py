@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from foodie import views
 from marketplace import views as MarketplaceViews
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,6 +29,11 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("marketplace/", include("marketplace.urls")),
     path("search/", MarketplaceViews.search, name="search"),
+    path(
+        "checkout/",
+        login_required(MarketplaceViews.Checkout.as_view()),
+        name="checkout",
+    ),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

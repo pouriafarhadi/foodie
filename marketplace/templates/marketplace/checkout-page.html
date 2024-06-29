@@ -1,0 +1,190 @@
+{% extends '_shared/_base.html' %}
+{% load thumbnail %}
+{% load static %}
+{% block title %}
+	Cart
+{% endblock %}
+
+
+{% block content %}
+	<div class="main-section">
+
+
+		<div class="page-section pt-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+						<div class="tabs-holder horizontal">
+							<ul class="stickynav-tabs nav nav-tabs">
+								<li class="active">
+									<a data-toggle="tab" href="#home"><i class="bi bi-handbag"></i>Your Order</a>
+								</li>
+
+							</ul>
+							<div class="tab-content">
+								<div id="home" class="tab-pane in active">
+									<div class="menu-itam-holder">
+										<div id="menu-item-list-6272" class="menu-itam-list">
+											<form action="{% url 'checkout' %}" method="post">
+												{% csrf_token %}
+												<div class="row">
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														First Name: {{ form.first_name }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														Last Name: {{ form.last_name }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														Phone Number: {{ form.phone }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														Email Address: {{ form.email }}
+												</div>
+													<div class="form-group col-md-12 col-lg-12 col-sm-12">
+														Address: {{ form.address }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														Country: {{ form.country }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														State: {{ form.state }}
+												</div>
+													<div class="form-group col-md-6 col-lg-6 col-sm-12">
+														City: {{ form.city }}
+												</div>
+													</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+						<div class="tabs-holder horizontal">
+							<ul class="stickynav-tabs nav nav-tabs">
+								<li class="active"><a data-toggle="tab" href="#home"><i class="bi bi-credit-card"></i>Your Order</a></li>
+
+							</ul>
+
+							<div class="tab-content">
+								<div id="home" class="tab-pane in active">
+									<div class="menu-itam-holder">
+										<!-- start showing the items -->
+										<div id="menu-item-list-6272" class="menu-itam-list">
+											<ul>
+												{% for cart in carts %}
+													<li id="cart-item-{{ cart.id }}">
+													<div class="image-holder">
+														<a href="#">
+															{% thumbnail cart.fooditem.image "175x165" crop='center' quality=90 as im %}
+			                                                    <img  src="{{ im.url }}" alt="">
+			                                                {% endthumbnail %}
+														</a>
+													</div>
+													<div class="text-holder">
+														<h6>{{ cart.fooditem.food_name }}</h6>
+														<span>{{ cart.fooditem.description }}</span>
+														<a href="{% url 'detail-marketplace' cart.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ cart.fooditem.vendor }}</a>
+													</div>
+													<div class="quantity" style="display: inline-block; position: absolute; top: 50%; transform: translateY(-50%); margin-top: -10px">
+														<i class="bi bi-record-fill"></i>{{ cart.quantity }}
+													</div>
+													<div class="price-holder">
+														 <span class="price">£{{ cart.fooditem.price }}</span>
+													</div>
+												</li>
+												{% endfor %}
+											</ul>
+										</div>
+
+										<!-- end showing the items -->
+										<div id="menu-item-list-6272" class="menu-itam-list">
+											<ul>
+												<li style="list-style-type: none;">
+													Subtotal
+													<span class="price float-right">
+														<span class="currency">$</span>
+														<span id="subtotal">{{ subtotal }}</span>
+													</span>
+												</li>
+												<li style="list-style-type: none;">
+													Value-added tax (VAT)
+													<span class="price float-right">
+														<span class="currency">$</span>
+														<span id="tax">{{ tax }}</span>
+													</span>
+												</li>
+												<li style="list-style-type: none; font-weight: bold">
+													Total
+													<span class="price float-right">
+														<span class="currency">$</span>
+														<span id="total">{{ grandtotal }}</span>
+													</span>
+												</li>
+
+											</ul>
+											<!-- select payment method -->
+											<h5>SELECT PAYMENT METHOD</h5>
+											<div class="payment_methods">
+												<label for="">
+													<input type="radio" value="PayPal" name="payment_method">
+													<img src="{% static 'images/PayPal.png' %}" alt="" width="100">
+												</label>
+												<label class="col-md-1 col-lg-1 col-sm-1" for=""></label>
+												<label for="">
+													<input type="radio" value="ZarinPal" name="payment_method">
+													<img src="{% static 'images/ZarinPal.png' %}" alt="" width="100">
+												</label>
+											</div>
+											<!-- select payment method -->
+											<span class="text-danger" id="payment-method-error"></span>
+											<hr>
+											<span class="text-danger" id="paypal-method-error"></span>
+											<div>
+												<button onclick="return payMethodConfirm();" type="submit" class="btn btn-danger w-100 p-2 mt-2 mb-2">PLACE ORDER</button>
+											</div>
+
+											</form>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	function payMethodConfirm(){
+        var payMethod = $("input[name='payment_method']:checked").val()
+		if(payMethod == "PayPal"){
+            $('#paypal-method-error').html("Selected Payment Method Is Not Available At The Moment");
+			return false;
+		}
+        else if(!payMethod){
+            $('#payment-method-error').html("Select Payment Method!");
+			return false;
+		}
+        else if(payMethod == "ZarinPal"){
+            var conf = confirm("You have selected"+payMethod+"as your preferred payment method.\nClick 'OK' to continue")
+			if(conf == true){
+                return true
+			}else {
+                return false
+			}
+        }
+	}
+    $('input[name=payment_method]').on('change', function (){
+        $('#paypal-method-error').html("")
+	    $('#payment-method-error').html("")
+    })
+	</script>
+{% endblock %}
