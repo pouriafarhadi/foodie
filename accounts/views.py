@@ -135,6 +135,11 @@ class CustDashboard(TemplateView):
         checkIfItsCustomer(request)
         return super().get(request, *args, **kwargs)
 
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     user = self.request.user
+    #     context["user"] = user
+
 
 class myAccount(View):
     def get(self, request):

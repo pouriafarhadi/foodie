@@ -10,11 +10,11 @@
                     <div class="company-info">
                         <div class="img-holder">
                             <figure>
-	                            {% if vendor.user_profile.profile_picture %}
-	                            	<img src="{{ vendor.user_profile.profile_picture.url }}" alt="cover">
-	                            {% else %}
-		                            <img src="{% static 'extra-images/profile-picture-1.PNG' %}" alt="profile">
-	                            {% endif %}
+		                            {% if vendor.user_profile.profile_picture %}
+		                                <img src="{{ vendor.user_profile.profile_picture.url }}" alt="cover">
+		                            {% else %}
+			                            <img src="{% static 'extra-images/profile-picture-1.PNG' %}" alt="profile">
+		                            {% endif %}
 
                             </figure>
                         </div>

@@ -82,3 +82,9 @@ class UserProfileForm(forms.ModelForm):
         if self.instance.longitude != self.cleaned_data.get("longitude"):
             self.add_error("longitude", "You may not change this field")
         return self.instance.longitude
+
+
+class UserInfoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "phone_number")

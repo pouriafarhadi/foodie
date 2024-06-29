@@ -22,7 +22,157 @@
 							<div class="user-dashboard loader-holder">
 								<div class="user-holder">
 									<h5 class="text-uppercase">Manage Your profile</h5>
+									<br>
+									<!-- Customer Form Start -->
+									<form action="{% url 'customer_profile' %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+										<div class="form-fields-set">
+											<ul>
+												<li>
+													<div class="row">
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>First Name *</label>
+                                                                {{ user_form.first_name }}
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>Last Name *</label>
+                                                                {{ user_form.last_name }}
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>Phone Number </label>
+                                                                {{ user_form.phone_number }}
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="restaurant-info">
+																<div class="img-holder">
+																	<ul class="foodbakery-gallery-holder">
+																		<li class="gal-img">
+																			<div class="drag-list">
+																				<div class="item-thumb">
+																				{% if profile_form.instance.profile_picture %}
+																					{% thumbnail profile_form.instance.profile_picture "100x100" crop='center' quality=90 as im %}
+                                                                                        <img class="thumbnail" src="{{ im.url }}" alt="">
+                                                                                    {% endthumbnail %}
+																				{% else %}
+																					<img class="thumbnail" src="{% static 'extra-images/profile-picture-1.PNG' %}" alt="">
+																				{% endif %}
+                                                                                    																				</div>
+																			</div>
+																		</li>
+																	</ul>
+																</div>
+																<div class="text-holder">
+																	<label>Update Profile Picture</label>
+																	<div class="upload-gallery">
+																		{% comment %}<input type="file" class="btn btn-info" name="profile_picture">{% endcomment %}
+                                                                        {{ profile_form.profile_picture }}
+																	</div>
+																</div>
+                                                                <label class="text-danger"> {{ profile_form.profile_picture.errors }} </label>
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="restaurant-info">
+																<div class="img-holder">
+																	<ul class="foodbakery-gallery-holder">
+																		<li class="gal-img">
+																			<div class="drag-list">
+																				<div class="item-thumb">
+																				{% if profile_form.instance.cover_photo %}
+																					{% thumbnail profile_form.instance.cover_photo "100x100" crop='center' quality=90 as im %}
+                                                                                        <img class="thumbnail" src="{{ im.url }}" alt="">
+                                                                                    {% endthumbnail %}
+																				{% else %}
+																					<img class="thumbnail" src="{% static 'extra-images/cover-photo-1.PNG' %}" alt="">
+																				{% endif %}
+                                                                                    																				</div>
+																			</div>
+																		</li>
+																	</ul>
+																</div>
+																<div class="text-holder">
+																	<label>Update Cover Photo</label>
+																	<div class="upload-gallery">
+																		{% comment %}<input type="file" class="btn btn-info" name="cover_photo">{% endcomment %}
+																	    {{ profile_form.cover_photo }}
+                                                                    </div>
+                                                                   <label class="text-danger"> {{ profile_form.cover_photo.errors }} </label>
+																</div>
+															</div>
+														</div>
+														<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.address.label }}</label>
+                                                                {{ profile_form.address }}
+                                                                <small class="text-muted float-right">powered by Google</small>
+															</div>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.country.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.country }}
+															</div>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.city.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.city }}
+															</div>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.state.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.state }}
+															</div>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.pincode.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.pincode }}
+															</div>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.longitude.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.longitude }}
+															</div>
+                                                            <label class="text-danger h6">{{ profile_form.longitude.errors }}</label>
+														</div>
+														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+															<div class="field-holder">
+																<label>{{ profile_form.latitude.label }}</label>
+																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
+                                                                {{ profile_form.latitude }}
+															</div>
+                                                            <label class="text-danger h6">{{ profile_form.latitude.errors }}</label>
+														</div>
 
+
+
+													</div>
+												</li>
+											</ul>
+											<div>
+												<div class="field-holder">
+													<div class="payment-holder input-button-loader">
+														<button type="submit" class="btn btn-info ">Update Information</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+									<!-- Customer Form End -->
 								</div>
 							</div>
 						</div>

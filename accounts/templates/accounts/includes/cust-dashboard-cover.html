@@ -1,6 +1,6 @@
 {% load  static %}
 
-<div class="page-section restaurant-detail-image-section" style=" background: url({% static 'extra-images/cover-photo-3.PNG' %}) no-repeat scroll 0 0 / cover;">
+<div class="page-section restaurant-detail-image-section" style=" background: url({% if user_profile.cover_photo %} {{ user_profile.cover_photo.url }} {% else %}{% static 'extra-images/cover-photo-1.PNG' %}{% endif %}) no-repeat scroll 0 0 / cover;">
 	<!-- Container Start -->
 	<div class="container">
 		<!-- Row Start -->
@@ -11,16 +11,29 @@
 					<div class="company-info">
 						<div class="img-holder">
 							<figure>
-								<img src="{% static 'extra-images/listing-logo18.png' %}" alt="">
+	                            {% if user_profile.profile_picture %}
+	                            	<img src="{{ user_profile.profile_picture.url }}" alt="cover">
+	                            {% else %}
+		                            <img src="{% static 'extra-images/profile-picture-1.PNG' %}" alt="profile">
+	                            {% endif %}
 							</figure>
 						</div>
 
 						<div class="text-holder">
-							<span class="restaurant-title">pouria farhadi</span>
-							<div class="text">
+							<span class="restaurant-title">{{ user.first_name }} {{ user.last_name }}</span>
+							{% if user.user_profile.address %}
+								<div class="text">
 								<i class="icon-location"></i>
-								<p>+98-911-984-9282</p>
+								<p>{{ user.user_profile.address }}</p>
 							</div>
+							{% endif %}
+							{% if user.phone_number %}
+								<div class="text">
+								<i class="bi bi-telephone"></i>
+								<p>{{ user.phone_number }}</p>
+							</div>
+							{% endif %}
+
 						</div>
 					</div>
 				</div>
