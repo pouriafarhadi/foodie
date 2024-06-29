@@ -19,13 +19,16 @@ def get_cart_counter(request):
 
 def get_cart_amounts(request):
     subtotal = 0
-    tax = 0
+    tax = 9
     grand_total = 0
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
         for item in cart_items:
             price = item.fooditem.price
             subtotal += price * item.quantity
-
-        grand_total = subtotal + tax
-    return dict(subtotal=subtotal, tax=tax, grandtotal=grand_total)
+        tax_amount = round((tax * subtotal) / 100, 2)
+        tax_name = "Value-added tax (VAT)"
+        grand_total = subtotal + tax_amount
+    else:
+        tax_amount = 0
+    return dict(subtotal=subtotal, tax=tax_amount, grandtotal=grand_total)

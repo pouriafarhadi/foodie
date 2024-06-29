@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import time, date, datetime
 
 from django.db import models
 from django.utils.text import slugify
@@ -39,6 +39,27 @@ class Vendor(models.Model):
             self.vendor_slug = slugify(self.vendor_name)
 
         return super().save(*args, **kwargs)
+
+    def is_open(self):
+        today = date.today().isoweekday()
+        current_opening_hours = OpeningHours.objects.filter(vendor=self, day=today)
+        now = datetime.now()
+        is_open = False
+
+        for i in current_opening_hours:
+            from_hour = i.from_hour
+            to_hour = i.to_hour
+            if from_hour and to_hour:
+                try:
+                    start = datetime.strptime(from_hour, "%I:%M %p").time()
+                    end = datetime.strptime(to_hour, "%I:%M %p").time()
+                    if start <= now.time() <= end:
+                        is_open = True
+                        break
+                except ValueError as e:
+                    print(f"Error parsing time: {e}")
+                    continue
+        return is_open
 
     def __str__(self):
         return self.vendor_name

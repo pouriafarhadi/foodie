@@ -13,3 +13,18 @@ class Cart(models.Model):
 
     def __unicode__(self):
         return self.user
+
+
+class Tax(models.Model):
+    tax_type = models.CharField(max_length=50, unique=True)
+    tax_percent = models.DecimalField(
+        max_digits=4, decimal_places=2, verbose_name="Tax Percentage (%)"
+    )
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Tax"
+        verbose_name_plural = "Taxes"
+
+    def __str__(self):
+        return self.tax_type

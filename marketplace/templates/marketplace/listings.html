@@ -25,12 +25,12 @@
 									</div>
 									<div class="listing simple">
 										<ul>
-											{% for vendor in vendors %}
+											{% for ven in vendors %}
 												<li>
 												<div class="img-holder">
 													<figure>
-														{% if vendor.user_profile.profile_picture %}
-															{% thumbnail vendor.user_profile.profile_picture "175x165" crop='center' quality=90 as im %}
+														{% if ven.user_profile.profile_picture %}
+															{% thumbnail ven.user_profile.profile_picture "175x165" crop='center' quality=90 as im %}
 			                                                    <img class="img-list wp-post-image" src="{{ im.url }}" alt="">
 			                                                {% endthumbnail %}
 														{% else %}
@@ -38,7 +38,16 @@
 														{% endif %}
 
 													</figure>
-													<span class="restaurant-status open"><em class="bookmarkRibbon"></em>Open</span>
+													{% if ven.is_open %}
+														<span class="restaurant-status open">
+														<em class="bookmarkRibbon"></em>open
+													</span>
+
+													{% else %}
+														<span class="restaurant-status close">
+														<em class="bookmarkRibbon"></em>close
+													</span>
+													{% endif %}
 												</div>
 												<div class="text-holder">
 													<div class="list-rating">
@@ -49,18 +58,18 @@
 													</div>
 													<div class="post-title">
 														<h5>
-															<a href="{% url 'detail-marketplace' slug=vendor.vendor_slug %}">{{ vendor.vendor_name }}</a>
+															<a href="{% url 'detail-marketplace' slug=ven.vendor_slug %}">{{ ven.vendor_name }}</a>
 														</h5>
 													</div>
-													{% if vendor.user_profile.address %}
+													{% if ven.user_profile.address %}
 														<span class="post-categories">Address :
-														<small class="text-muted">{{ vendor.user_profile.address }}</small>
+														<small class="text-muted">{{ ven.user_profile.address }}</small>
 														</span>
 													{% endif %}
 												</div>
 												<div class="list-option">
 
-													<a href="{% url 'detail-marketplace' vendor.vendor_slug %}" class="viewmenu-btn text-color">View Menu</a>
+													<a href="{% url 'detail-marketplace' ven.vendor_slug %}" class="viewmenu-btn text-color">View Menu</a>
 												</div>
 											</li>
 											{% endfor %}
