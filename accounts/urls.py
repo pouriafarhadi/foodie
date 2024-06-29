@@ -36,7 +36,9 @@ urlpatterns = [
         name="logout",
     ),
     path(
-        "custDashboard/", login_required(CustDashboard.as_view()), name="custDashboard"
+        "custDashboard/",
+        login_required(CustDashboard.as_view(), login_url="/login/"),
+        name="custDashboard",
     ),
     path(
         "vendorDashboard/",
@@ -57,4 +59,5 @@ urlpatterns = [
     ),
     path("resetPassword/", views.ResetPasswordView.as_view(), name="reset_password"),
     path("vendor/", include("vendor.urls")),
+    path("customer/", include("customer.urls")),
 ]

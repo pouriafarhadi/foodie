@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "marketplace",
     "vendor",
     "menu",
+    "customer",
     "sorl.thumbnail",
 ]
 
