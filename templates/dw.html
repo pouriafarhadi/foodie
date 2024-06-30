@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Information Page</title>
+    <script type="text/javascript">
+        // Set the countdown time in seconds
+        var countdownTime = 10;
+
+        // Function to update the countdown timer
+        function updateCountdown() {
+            var countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = countdownTime;
+
+            // Check if the countdown time has reached 0
+            if (countdownTime <= 0) {
+                // Redirect to another page
+                window.location.href = "/redirected_page/";
+            } else {
+                // Decrease the countdown time by 1 second
+                countdownTime--;
+            }
+        }
+
+        // Update the countdown timer every second
+        setInterval(updateCountdown, 1000);
+    </script>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <p>You will be redirected in <span id="countdown">10</span> seconds...</p>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends '_shared/_base.html' %}
+{% block title %}
+    Order Complete
+{% endblock %}
+{% load static %}
+{% block head %}
+    <style>
+        .order-complete-container {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .order-complete-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .order-complete-message {
+            margin-bottom: 20px;
+        }
+        .order-complete-countdown {
+            font-size: 24px;
+            color: #007bff;
+        }
+        .order-complete-logo {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script type="text/javascript">
+        var countdownTime = 10;
+
+        function updateCountdown() {
+            var countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = countdownTime;
+
+            if (countdownTime <= 0) {
+                window.location.href = "{% url 'order_complete' order_num=order_num transaction_id=transaction_id waiting='False' %}";
+            } else {
+                countdownTime--;
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="order-complete-container">
+                    <img src="{% static 'logo/foodOnlineLogo.png' %}" alt="Logo" class="order-complete-logo">
+                    <h4 class="order-complete-header">Thank You for Your Order</h4>
+                    <h6>Hello {{ order.name }},</h6>
+                    <p class="order-complete-message">{{ message }}</p>
+                    <p>You will be redirected in <span id="countdown" class="order-complete-countdown">10</span> seconds...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

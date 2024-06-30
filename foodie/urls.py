@@ -34,6 +34,7 @@ urlpatterns = [
         login_required(MarketplaceViews.Checkout.as_view()),
         name="checkout",
     ),
+    path("orders/", include("order.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

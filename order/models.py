@@ -6,7 +6,7 @@ from menu.models import FoodItem
 class Payment(models.Model):
     PAYMENT_METHOD = (
         ("PayPal", "PayPal"),
-        ("zarinpal", "zarinpal"),  # Only for Indian Students.
+        ("zarinpal", "zarinpal"),  # for Iranians
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=100)
@@ -72,4 +72,4 @@ class OrderedFood(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.fooditem.food_title
+        return self.fooditem.food_name

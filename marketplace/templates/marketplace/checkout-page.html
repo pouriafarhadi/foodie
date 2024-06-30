@@ -25,7 +25,7 @@
 								<div id="home" class="tab-pane in active">
 									<div class="menu-itam-holder">
 										<div id="menu-item-list-6272" class="menu-itam-list">
-											<form action="{% url 'checkout' %}" method="post">
+											<form action="{% url 'place_order' %}" method="post">
 												{% csrf_token %}
 												<div class="row">
 													<div class="form-group col-md-6 col-lg-6 col-sm-12">
@@ -174,7 +174,7 @@
 			return false;
 		}
         else if(payMethod == "ZarinPal"){
-            var conf = confirm("You have selected"+payMethod+"as your preferred payment method.\nClick 'OK' to continue")
+            var conf = confirm("You have selected "+payMethod+" as your preferred payment method.\nClick 'OK' to continue")
 			if(conf == true){
                 return true
 			}else {
