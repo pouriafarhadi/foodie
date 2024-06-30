@@ -13,6 +13,7 @@ from django.utils.http import urlsafe_base64_decode
 from accounts.forms import RegisterUserForm, LoginForm, ResetPasswordForm
 from accounts.models import User, UserProfile
 from accounts.utils import detectUser, send_mail, checkIfItsCustomer, checkIfItsVendor
+from order.models import Order
 from vendor.forms import RegisterRestaurantForm
 
 
@@ -135,10 +136,14 @@ class CustDashboard(TemplateView):
         checkIfItsCustomer(request)
         return super().get(request, *args, **kwargs)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     user = self.request.user
-    #     context["user"] = user
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        orders = Order.objects.filter(user=self.request.user, is_ordered=True)
+        recent_orders = orders[:5]
+        context["orders"] = orders
+        context["orders_count"] = orders.count()
+        context["recent_orders"] = recent_orders
+        return context
 
 
 class myAccount(View):
