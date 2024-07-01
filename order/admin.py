@@ -18,7 +18,12 @@ class OrderedFoodInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("order_number", "user", "total")
+    list_display = (
+        "order_number",
+        "user",
+        "total",
+        "order_placed_to",
+    )
     inlines = [OrderedFoodInline]
 
 

@@ -1,19 +1,22 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.http import HttpRequest, Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.contrib import messages
-from django.views.generic import FormView, UpdateView, TemplateView
+from django.views.generic import FormView, UpdateView, TemplateView, ListView
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
 from accounts.utils import checkIfItsVendor
 from menu.forms import CategoryForm, FoodItemForm
 from menu.models import Category, FoodItem
+from order.models import Order, OrderedFood
 from .forms import RegisterRestaurantForm, OpeningHoursForm
 from .models import Vendor, OpeningHours
 from .utils import get_vendor
+from django.db.models import Case, When, BooleanField
 
 
 @login_required(login_url="login")
@@ -275,3 +278,85 @@ def removeopeninghour(request, pk):
             raise Http404
     else:
         return Http404
+
+
+class OrderDetailVendorView(View):
+    def get(self, request, order_number, is_mine):
+        checkIfItsVendor(request)
+        order = get_object_or_404(Order, order_number=order_number)
+        print(is_mine)
+        if is_mine == "vendor":
+            ordered_food = OrderedFood.objects.filter(
+                order=order, fooditem__vendor=get_vendor(request)
+            )
+            order_data = order.get_total_by_vendor()
+            context = {
+                "order": order,
+                "ordered_food": ordered_food,
+                "subtotal": order_data.get("subtotal"),
+                "tax": order_data.get("tax_amount"),
+                "grand_total": order_data.get("grand_total"),
+            }
+            return render(request, "vendor/order-detail-vendor-page.html", context)
+        elif is_mine == "cust":
+            ordered_food = OrderedFood.objects.filter(order=order)
+            subtotal = 0
+            for item in ordered_food:
+                subtotal += item.quantity * item.price
+
+            if order.user != request.user:
+                raise PermissionDenied
+            if not order.is_ordered:
+                raise Http404
+            context = {
+                "order": order,
+                "ordered_food": ordered_food,
+                "subtotal": subtotal,
+                "tax": order.total_tax,
+                "grand_total": order.total,
+            }
+            return render(request, "vendor/order-detail-vendor-page.html", context)
+
+
+"""
+class MyOrderDetailView(View):
+    def get(self, request, order_number):
+        checkIfItsCustomer(request)
+        order = get_object_or_404(Order, order_number=order_number)
+        ordered_food = OrderedFood.objects.filter(order=order)
+        subtotal = 0
+        for item in ordered_food:
+            subtotal += item.quantity * item.price
+
+        if order.user != request.user:
+            raise PermissionDenied
+        if not order.is_ordered:
+            raise Http404
+        context = {"order": order, "ordered_food": ordered_food, "st": subtotal}
+        return render(request, "customer/my-order-detail-page.html", context)
+"""
+
+
+class MyOrdersVendorListView(ListView):
+    template_name = "vendor/vendor-orders-list-page.html"
+    model = Order
+    context_object_name = "orders"
+    paginate_by = 5
+
+    def get_queryset(self):
+        query = super().get_queryset().filter(user=self.request.user, is_ordered=True)
+        vendor = get_vendor(self.request)
+
+        # Combine the two queries
+        vendor_orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True)
+        # Combine both querysets and ensure unique results
+        combined_query = query | vendor_orders
+        combined_query = combined_query.annotate(
+            mine=Case(
+                When(vendors__in=[vendor.id], then=True),
+                default=False,
+                output_field=BooleanField(),
+            )
+        ).order_by("-created_at")
+
+        return combined_query

@@ -64,4 +64,14 @@ urlpatterns = [
         login_required(views.DeleteFoodItem.as_view()),
         name="delete-food-item",
     ),
+    path(
+        "my_orders/detail/<int:order_number>/<is_mine>",  # later in views module checks if its for the vendor which is requested this page or its the vendor's order for another restaurants
+        login_required(views.OrderDetailVendorView.as_view()),
+        name="order-detail-vendor",
+    ),
+    path(
+        "my_orders/",
+        login_required(views.MyOrdersVendorListView.as_view()),
+        name="my_orders_vendor",
+    ),
 ]

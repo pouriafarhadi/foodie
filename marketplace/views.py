@@ -30,7 +30,9 @@ class MarketplaceView(ListView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        query = query.filter(is_approved=True, user__is_active=True)
+        query = query.filter(is_approved=True, user__is_active=True).exclude(
+            user=self.request.user
+        )
         return query
 
 

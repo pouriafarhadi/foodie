@@ -22,3 +22,19 @@
 form#opening_hours select{
     padding: 4px 4px !important;
 }
+
+
+/* Style for the fixed back button */
+.back-button {
+    position: fixed;
+    top: 15px;
+    left: 10px;
+    background-color: #c33232; /* Your background color */
+    color: #FFFFFF; /* Matching text color */
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    font-weight: bold; /* Bold text */
+    border-radius: 20px; /* Rounded corners */
+}

@@ -1,0 +1,90 @@
+{% extends '_shared/_base.html' %}
+{% load static %}
+{% block title %}
+	Customer Dashboard
+{% endblock %}
+
+
+{% block content %}
+    <div class="main-section">
+			{% include 'accounts/includes/vendor-dashboard-cover.html' %}
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <!-- load the sidebar here -->
+                            {% include 'accounts/includes/sidebar-dashboard-vendor.html' %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									<h5 class="text-uppercase">My orders</h5>
+									<br>
+									<div class="row">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<div class="user-orders-list">
+												<div class="responsive-table">
+													<table class="table table-hover">
+													  <thead>
+													    <tr>
+													      <th scope="col">Order #</th>
+													      <th scope="col">Ordered by</th>
+													      <th scope="col">Name</th>
+													      <th scope="col">Total</th>
+													      <th scope="col">Status</th>
+													      <th scope="col">Date</th>
+													      <th scope="col">Action</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+													  {% for order in orders %}
+															  <tr class="{% if not order.mine %}table-success{% endif %}">
+														        <td><b><a class="text-dark" href="{% url 'my_order_detail' order_number=order.order_number %}">{{ order.order_number }}</a></b></td>
+														        <td>
+														        {% if order.mine %}
+														        	Customer
+														        {% else %}
+															        My Account
+														        {% endif %}
+														        </td>
+															    <td>{{ order.name }}</td>
+														        <td>{{ order.total }}</td>
+														        <td>{{ order.status }}</td>
+														        <td>{{ order.created_at }}</td>
+														        <td>
+															        <a href="{% if order.mine %}{% url 'order-detail-vendor' order_number=order.order_number is_mine='vendor' %}{% else %}{% url 'order-detail-vendor' order_number=order.order_number is_mine='cust' %}{% endif %}" class="btn btn-danger">Details</a>
+														        </td>
+														    </tr>
+													  {% endfor %}
+
+													  </tbody>
+													<div class="clearfix"></div>
+														<ul class="pagination">
+															{% if page_obj.has_previous %}
+																<li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+															{% endif %}
+															{% for pageNumber in paginator.page_range %}
+																<li class="{% if pageNumber == page_obj.number %} active {% endif %}">
+																	<a href="?page={{ pageNumber }}">{{ pageNumber }}</a>
+																</li>
+															{% endfor %}
+															{% if page_obj.has_next %}
+																<li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+															{% endif %}
+														</ul>
+													</table>
+
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    {% include 'alert/alert_messages.html' %}
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages, auth
 from django.contrib.auth import login
 from django.contrib.auth.tokens import default_token_generator
@@ -10,11 +12,14 @@ from django.views import View
 from django.views.generic import CreateView, TemplateView, FormView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.http import urlsafe_base64_decode
+
+from accounts.context_processors import get_vendor
 from accounts.forms import RegisterUserForm, LoginForm, ResetPasswordForm
 from accounts.models import User, UserProfile
 from accounts.utils import detectUser, send_mail, checkIfItsCustomer, checkIfItsVendor
 from order.models import Order
 from vendor.forms import RegisterRestaurantForm
+from vendor.models import Vendor
 
 
 class UserRegistrationView(FormView):
@@ -128,6 +133,32 @@ class VendorDashboard(TemplateView):
         checkIfItsVendor(request)
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vendor = get_vendor(self.request)["vendor"]
+        orders = Order.objects.filter(
+            vendors__in=[vendor.id], is_ordered=True
+        ).order_by("-created_at")
+        recent_orders = orders[:5]
+        # current month revenue
+        current_month = datetime.now().month
+        current_month_orders = orders.filter(
+            vendors__in=[vendor.id], created_at__month=current_month
+        )
+        current_month_revenue = 0
+        for i in current_month_orders:
+            current_month_revenue += i.get_total_by_vendor().get("grand_total")
+        # total revenue
+        total_revenue = 0
+        for i in orders:
+            total_revenue += i.get_total_by_vendor().get("grand_total")
+        context["orders"] = orders
+        context["recent_orders"] = recent_orders
+        context["orders_count"] = orders.count()
+        context["total_revenue"] = total_revenue
+        context["current_month_revenue"] = current_month_revenue
+        return context
+
 
 class CustDashboard(TemplateView):
     template_name = "accounts/custDashboard.html"
@@ -138,7 +169,9 @@ class CustDashboard(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        orders = Order.objects.filter(user=self.request.user, is_ordered=True)
+        orders = Order.objects.filter(user=self.request.user, is_ordered=True).order_by(
+            "-created_at"
+        )
         recent_orders = orders[:5]
         context["orders"] = orders
         context["orders_count"] = orders.count()

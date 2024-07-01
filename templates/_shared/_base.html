@@ -11,7 +11,12 @@
 </head>
 <body>
 	<!--Main Wrapper-->
+	{% if request.path != '/' %}
+        <!-- Back Button -->
+        <button class="back-button" onclick="goBack()">Back</button>
+    {% endif %}
 	<div class="wrapper">
+	
 		<!-- Header Start -->
 		{% include 'includes/header_component.html' %}
 		<!-- Header End -->

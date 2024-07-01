@@ -1,3 +1,8 @@
+// JavaScript function to go back to the previous page
+function goBack() {
+    window.history.back();
+}
+
 $(document).ready(function(){
     // add food item
     $('.add_to_cart').on('click', function(e){

@@ -5,9 +5,11 @@ from django.urls import reverse
 from django.views import View
 from marketplace.context_processors import get_cart_amounts
 from marketplace.models import Cart
+from menu.models import FoodItem
 from .forms import OrderForm
 from .models import Order, Payment, OrderedFood
 from .utils import generate_order_number
+import simplejson as json
 
 
 @login_required(login_url="/login/")
@@ -16,6 +18,23 @@ def placeOrder(request):
     cart_count = carts.count()
     if cart_count <= 0:
         return redirect("marketplace")
+    s = {i.fooditem.vendor_id for i in carts}
+    vendors_ids = list(s)
+    """calculating the total data"""
+    subtotal = 0
+    total_data = {}
+    k = {}
+    for i in carts:
+        fooditem = FoodItem.objects.get(pk=i.fooditem.id, vendor_id__in=vendors_ids)
+        v_id = fooditem.vendor_id
+        if v_id in k:
+            subtotal = k[v_id]
+            subtotal += fooditem.price * i.quantity
+            k[v_id] = subtotal
+        else:
+            subtotal = fooditem.price * i.quantity
+            k[v_id] = subtotal
+        total_data.update({fooditem.vendor_id: {"subtotal": subtotal}})
 
     if request.method == "POST":
         form = OrderForm(request.POST)
@@ -31,8 +50,11 @@ def placeOrder(request):
             order.total = grand_total
             order.total_tax = tax
             order.payment_method = request.POST["payment_method"]
+            order.total_data = json.dumps(total_data)
             order.save()
             order.order_number = generate_order_number(order.id)
+            """giving order the list of vendors"""
+            order.vendors.add(*vendors_ids)
             """
             is_ordered should not set to be true until payment completed
              in this project we do not have real payment so i assume payment is successfully completed 

@@ -57,6 +57,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "order.request_object.requestObjectMiddleware",  # create custom middleware for accessing the request object in models.py
 ]
 
 ROOT_URLCONF = "foodie.urls"
