@@ -38,3 +38,20 @@ form#opening_hours select{
     font-weight: bold; /* Bold text */
     border-radius: 20px; /* Rounded corners */
 }
+
+
+.btn-generate-password {
+    border-radius: 15px;
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+.btn-show-password {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+

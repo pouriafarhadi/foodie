@@ -14,7 +14,7 @@ from accounts.views import (
 
 
 urlpatterns = [
-    path("", login_required(myAccount.as_view()), name="account"),
+    path("", login_required(myAccount.as_view(), login_url="/login/"), name="account"),
     path(
         "registerUser/",
         UserRegistrationView.as_view(),
@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     path(
         "vendorDashboard/",
-        login_required(VendorDashboard.as_view()),
+        login_required(VendorDashboard.as_view(), login_url="/login/"),
         name="vendorDashboard",
     ),
     path(

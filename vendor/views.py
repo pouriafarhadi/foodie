@@ -220,7 +220,7 @@ class OpeningHourView(View):
         return render(request, "vendor/opening-hours-page.html", context)
 
 
-@login_required(login_url="login")
+@login_required(login_url="/login/")
 def addingopeninghours(request):
     if request.user.is_authenticated:
         checkIfItsVendor(request)
@@ -267,6 +267,7 @@ def addingopeninghours(request):
         return Http404
 
 
+@login_required(login_url="/login/")
 def removeopeninghour(request, pk):
     if request.user.is_authenticated:
         checkIfItsVendor(request)
@@ -284,7 +285,6 @@ class OrderDetailVendorView(View):
     def get(self, request, order_number, is_mine):
         checkIfItsVendor(request)
         order = get_object_or_404(Order, order_number=order_number)
-        print(is_mine)
         if is_mine == "vendor":
             ordered_food = OrderedFood.objects.filter(
                 order=order, fooditem__vendor=get_vendor(request)
@@ -316,25 +316,6 @@ class OrderDetailVendorView(View):
                 "grand_total": order.total,
             }
             return render(request, "vendor/order-detail-vendor-page.html", context)
-
-
-"""
-class MyOrderDetailView(View):
-    def get(self, request, order_number):
-        checkIfItsCustomer(request)
-        order = get_object_or_404(Order, order_number=order_number)
-        ordered_food = OrderedFood.objects.filter(order=order)
-        subtotal = 0
-        for item in ordered_food:
-            subtotal += item.quantity * item.price
-
-        if order.user != request.user:
-            raise PermissionDenied
-        if not order.is_ordered:
-            raise Http404
-        context = {"order": order, "ordered_food": ordered_food, "st": subtotal}
-        return render(request, "customer/my-order-detail-page.html", context)
-"""
 
 
 class MyOrdersVendorListView(ListView):

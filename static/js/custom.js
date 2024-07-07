@@ -3,6 +3,29 @@ function goBack() {
     window.history.back();
 }
 
+
+
+function generatePassword() {
+    var length = 12,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$!",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    document.getElementById("id_password").value = retVal;
+    document.getElementById("id_confirm_password").value = retVal;
+}
+
+function togglePasswordVisibility() {
+    var passwordField = document.getElementById("id_password");
+    var confirmPasswordField = document.getElementById("id_confirm_password");
+    var type = passwordField.type === "password" ? "text" : "password";
+    passwordField.type = type;
+    confirmPasswordField.type = type;
+}
+
+
+
 $(document).ready(function(){
     // add food item
     $('.add_to_cart').on('click', function(e){

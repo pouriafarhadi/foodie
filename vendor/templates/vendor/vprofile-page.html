@@ -52,7 +52,6 @@
 																<div class="text-holder">
 																	<label>Update Profile Picture</label>
 																	<div class="upload-gallery">
-																		{% comment %}<input type="file" class="btn btn-info" name="profile_picture">{% endcomment %}
                                                                         {{ profile_form.profile_picture }}
 																	</div>
 																</div>
@@ -81,7 +80,6 @@
 																<div class="text-holder">
 																	<label>Update Cover Photo</label>
 																	<div class="upload-gallery">
-																		{% comment %}<input type="file" class="btn btn-info" name="cover_photo">{% endcomment %}
 																	    {{ profile_form.cover_photo }}
                                                                     </div>
                                                                    <label class="text-danger"> {{ profile_form.cover_photo.errors }} </label>
@@ -123,41 +121,30 @@
 															<div class="field-holder">
 																<label>{{ profile_form.address.label }}</label>
                                                                 {{ profile_form.address }}
-                                                                <small class="text-muted float-right">powered by Google</small>
+                                                                <small class="text-muted float-right">>> Some map APIs can empower it <<</small>
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 															<div class="field-holder">
 																<label>{{ profile_form.country.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
                                                                 {{ profile_form.country }}
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 															<div class="field-holder">
 																<label>{{ profile_form.city.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
                                                                 {{ profile_form.city }}
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 															<div class="field-holder">
 																<label>{{ profile_form.state.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
                                                                 {{ profile_form.state }}
 															</div>
 														</div>
 														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 															<div class="field-holder">
-																<label>{{ profile_form.pincode.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
-                                                                {{ profile_form.pincode }}
-															</div>
-														</div>
-														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-															<div class="field-holder">
 																<label>{{ profile_form.longitude.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
                                                                 {{ profile_form.longitude }}
 															</div>
                                                             <label class="text-danger h6">{{ profile_form.longitude.errors }}</label>
@@ -165,7 +152,6 @@
 														<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
 															<div class="field-holder">
 																<label>{{ profile_form.latitude.label }}</label>
-																{% comment %}<input type="text" placeholder="i.e Pizza Hut" class="foodbakery-dev-req-field">{% endcomment %}
                                                                 {{ profile_form.latitude }}
 															</div>
                                                             <label class="text-danger h6">{{ profile_form.latitude.errors }}</label>

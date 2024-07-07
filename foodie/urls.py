@@ -31,7 +31,7 @@ urlpatterns = [
     path("search/", MarketplaceViews.search, name="search"),
     path(
         "checkout/",
-        login_required(MarketplaceViews.Checkout.as_view()),
+        login_required(MarketplaceViews.Checkout.as_view(), login_url="/login/"),
         name="checkout",
     ),
     path("orders/", include("order.urls")),

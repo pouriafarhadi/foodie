@@ -30,28 +30,24 @@
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.first_name.label }}</label>
                                                                         {{ uform.first_name }}
-                                                                        {% comment %}<input type="text" class="foodbakery-dev-req-field" id="foodbakery_restaurant_title_59054637" name="foodbakery_restaurant_title">{% endcomment %}
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.last_name.label }}</label>
                                                                         {{ uform.last_name }}
-                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_phone_59054637" name="foodbakery_restaurant_contact_phone">{% endcomment %}
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.email.label }}</label>
                                                                         {{ uform.email }}
-                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_contact_email_59054637" name="foodbakery_restaurant_contact_email">{% endcomment %}
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.username.label }}</label>
                                                                         {{ uform.username }}
-                                                                        {% comment %}<input type="text" id="foodbakery_restaurant_contact_email_59054637" name="foodbakery_restaurant_contact_email">{% endcomment %}
                                                                     </div>
                                                                 </div>
                                                             </li>
@@ -70,26 +66,22 @@
                                                                     </div>
                                                                 </div>
                                                             </li>
-
                                                             <li>
                                                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.password.label }}</label>
                                                                         {{ uform.password }}
-                                                                        {% comment %}<input type="password" name="foodbakery_restaurant_username" class="foodbakery-dev-username foodbakery-dev-req-field">{% endcomment %}
+                                                                        <button type="button" class="btn btn-light" onclick="generatePassword()">Generate Password</button>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                                     <div class="field-holder">
                                                                         <label>{{ uform.confirm_password.label }}</label>
                                                                         {{ uform.confirm_password }}
-                                                                        {% comment %}<input type="password" name="foodbakery_restaurant_user_email" class="foodbakery-dev-user-email foodbakery-dev-req-field">{% endcomment %}
+	                                                                    <button type="button" class="btn btn-light" onclick="togglePasswordVisibility()">Show/Hide Password</button>
                                                                     </div>
                                                                 </div>
                                                             </li>
-
-
-
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -102,7 +94,7 @@
                                                 	{% for error in field.errors %}
                                                 		<li style="color: red">{{ error }}</li>
                                                 	{% endfor %}
-                                                	
+
                                                 {% endfor %}
 
                                             </ul>

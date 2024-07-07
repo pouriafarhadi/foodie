@@ -24,7 +24,10 @@
 									<h5 class="text-uppercase">Build your menu Here!</h5>
                                     <hr>
 									<h6>Menu categories</h6>
-                                    <a href="{% url 'add-food-item' %}" class="btn btn-info float-right m-1 text-white bg-success"><i class="bi bi-plus"></i>Add food</a>
+									{% if categories %}
+										<a href="{% url 'add-food-item' %}" class="btn btn-info float-right m-1 text-white bg-success"><i class="bi bi-plus"></i>Add food</a>
+									{% endif %}
+
                                     <a href="{% url 'add-category' %}" class="btn btn-info float-right m-1"><i class="bi bi-plus"></i>Add category</a>
 									{% if categories %}
 
