@@ -1,6 +1,7 @@
 {% extends '_shared/_base.html' %}
 {% load thumbnail %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}
 	Cart
 {% endblock %}
@@ -86,7 +87,7 @@
 													</div>
 													<div class="text-holder">
 														<h6>{{ cart.fooditem.food_name }}</h6>
-														<span>{{ cart.fooditem.description }}</span>
+														<span>{{ cart.fooditem.description | half }}</span>
 														<a href="{% url 'detail-marketplace' cart.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ cart.fooditem.vendor }}</a>
 													</div>
 													<div class="quantity" style="display: inline-block; position: absolute; top: 50%; transform: translateY(-50%); margin-top: -10px">

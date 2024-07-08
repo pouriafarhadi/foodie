@@ -39,15 +39,26 @@ class LoginForm(forms.Form):
 
 
 class ResetPasswordForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(
+        widget=forms.PasswordInput, validators=[validate_password]
+    )
     confirm_password = forms.CharField(widget=forms.PasswordInput)
 
-    def clean_confirm_password(self):
-        password = self.cleaned_data.get("password")
-        confirm_password = self.cleaned_data.get("confirm_password")
-        if password != confirm_password:
-            raise forms.ValidationError("Passwords must match")
-        return password
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                self.add_error("password", e)
+
+            if password != confirm_password:
+                self.add_error("confirm_password", "Passwords must match")
+
+        return cleaned_data
 
 
 class UserProfileForm(forms.ModelForm):

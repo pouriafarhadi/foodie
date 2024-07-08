@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
         "is_active",
         "is_staff",
     )
+    list_editable = ("role", "is_active")
     ordering = ("-date_joined",)
     filter_horizontal = ()
     list_filter = ()

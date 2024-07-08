@@ -1,5 +1,6 @@
 {% extends '_shared/_base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% load thumbnail %}
 {% block title %}
 {{ vendor.vendor_name }}
@@ -81,25 +82,25 @@
 			</div>
 			<!-- Container End -->
 		</div>
-
+		<!-- main content -->
 		<div class="page-section">
 			<div class="container">
 				<div class="row">
+					<!-- slider categories -->
 					<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 sticky-sidebar">
-						<div class="filter-toggle">
-							<span class="filter-toggle-text">Categories By</span><i class="icon-chevron-down"></i>
-						</div>
 						<div class="filter-wrapper">
 							<div class="categories-menu">
 								<h6><i class="icon-restaurant_menu"></i>Categories</h6>
 								<ul class="menu-list">
 									{% for category in categories %}
-										<li class="active"><a href="#" class="menu-category-link"> {{ category.category_name }} </a></li>
+										<li class="active"><a href="#category-section-{{ category.category_name }}" class="menu-category-link"> {{ category.category_name }} </a></li>
 									{% endfor %}
 								</ul>
 							</div>
 						</div>
 					</div>
+					<!-- slider categories END -->
+					<!-- categories and fooditems -->
 					<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
 						<div class="tabs-holder horizontal">
 							<ul class="stickynav-tabs nav nav-tabs">
@@ -114,7 +115,7 @@
 
 											{% for category in categories %}
 												<div class="element-title" id="menu-category-2">
-												<h5 class="text-color">{{ category.category_name }}</h5>
+												<h5 id="category-section-{{ category.category_name }}" class="text-color">{{ category.category_name }}</h5>
 												<span>{{ category.description }}</span>
 											</div>
 											<ul>
@@ -129,7 +130,7 @@
 													</div>
 													<div class="text-holder">
 														<h6>{{ food_item.food_name }}</h6>
-														<span>{{ food_item.description }}</span>
+														<span>{{ food_item.description | half }}</span>
 													</div>
 													<div class="price-holder">
 														<span class="price">£{{ food_item.price }}</span>
@@ -151,7 +152,7 @@
 											</span>
 
 										{% endfor %}
-										
+
 
 										</div>
 									</div>
@@ -160,9 +161,10 @@
 							</div>
 						</div>
 					</div>
-
+					<!-- categories and fooditems END -->
 				</div>
 			</div>
 		</div>
+		<!-- main content End -->
 	</div>
 {% endblock %}

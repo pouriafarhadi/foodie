@@ -1,0 +1,18 @@
+{% extends "_shared/_base.html" %}
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+{% endblock %}
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+<div class="error-404">
+    <h1>Oops! Page Not Found</h1>
+    <p>We're sorry, but the page you were looking for doesn't exist.</p>
+    <a href="/" class="button">Go to Homepage</a>
+    <img src="{% static 'images/404.jpg' %}" alt="404 Image" class="error-image">
+</div>
+{% endblock %}
+
