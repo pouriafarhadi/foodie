@@ -1,4 +1,4 @@
-# accounts/management/commands/populate_fake_data.py
+import random
 
 from django.core.management.base import BaseCommand
 from faker import Faker
@@ -114,7 +114,7 @@ class Command(BaseCommand):
         }
 
         # Create fake users and profiles
-        for _ in range(15):
+        for ttt in range(15):
             user = User.objects.create_user(
                 first_name=faker.first_name(),
                 last_name=faker.last_name(),
@@ -140,7 +140,7 @@ class Command(BaseCommand):
                 user_profile=profile,
                 vendor_name=faker.company(),
                 vendor_slug=faker.slug(),
-                vendor_license=faker.image_url(),
+                vendor_license="faker.image_url()",
                 is_approved=True,
             )
 
@@ -149,9 +149,9 @@ class Command(BaseCommand):
                 OpeningHours.objects.create(
                     vendor=vendor,
                     day=day,
-                    from_hour=faker.time(pattern="%I:%M %p"),
-                    to_hour=faker.time(pattern="%I:%M %p"),
-                    is_closed=faker.boolean(),
+                    from_hour=randomTimeEveryThirtyMinutes(),
+                    to_hour=randomTimeEveryThirtyMinutes(),
+                    is_closed=False,
                 )
 
             # Create predefined categories and related food items
@@ -169,9 +169,16 @@ class Command(BaseCommand):
                         food_name=food_item_name,
                         description=faker.text(),
                         price=faker.random_number(digits=2),
-                        image=faker.image_url(),
                         is_available=faker.boolean(),
                         slug=faker.slug(),
                     )
 
         self.stdout.write(self.style.SUCCESS("Successfully populated fake data"))
+
+
+def randomTimeEveryThirtyMinutes():
+    faker = Faker()
+    a = faker.time(pattern="%I:%M %p")
+    b = a[:3] + "00" + a[5:]
+    c = a[:3] + "30" + a[5:]
+    return random.choice([c, b])

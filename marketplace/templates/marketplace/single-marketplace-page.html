@@ -31,13 +31,13 @@
 									</figure>
 								</div>
 								<div class="text-holder">
-									<span class="restaurant-title">{{ vendor.vendor_name }} {% if vendor.is_open %}<i class="bi bi-door-open"></i>{% else %}<i class="bi bi-door-closed"></i>{% endif %}</span>
+									<span class="restaurant-title">{{ res.vendor_name }} {% if res.is_open %}<i class="bi bi-door-open"></i>{% else %}<i class="bi bi-door-closed"></i>{% endif %}</span>
 								<div class="text">
 									<i class="icon-local_pizza"></i>
 									<p>
-										{% if vendor.user_profile.address %}
+										{% if res.user_profile.address %}
 											<span class="post-categories">
-											<small >{{ vendor.user_profile.address }}</small>
+											<small >{{ res.user_profile.address }}</small>
 											</span>
 										{% endif %}
 									</p>
@@ -121,6 +121,7 @@
 											<ul>
 												{% for food_item in category.food_items.all %}
 													<li>
+
 													<div class="image-holder">
 														<a href="#">
 															{% thumbnail food_item.image "175x165" crop='center' quality=90 as im %}
@@ -128,6 +129,7 @@
 			                                                {% endthumbnail %}
 														</a>
 													</div>
+
 													<div class="text-holder">
 														<h6>{{ food_item.food_name }}</h6>
 														<span>{{ food_item.description | half }}</span>

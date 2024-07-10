@@ -14,17 +14,17 @@ urlpatterns = [
     ),
     path(
         "add_to_cart/<int:food_id>/",
-        login_required(views.AddToCart.as_view(), login_url="/login/"),
+        views.AddToCart.as_view(),
         name="add-to-cart",
     ),
     path(
         "decrease_cart/<int:food_id>/",
-        login_required(views.DecreaseCart.as_view(), login_url="/login/"),
+        views.DecreaseCart.as_view(),
         name="decrease_cart",
     ),
     path(
         "delete_cart/<int:cart_id>/",
-        login_required(views.DeleteCart.as_view(), login_url="/login/"),
+        views.DeleteCart.as_view(),
         name="delete-cart",
     ),
 ]

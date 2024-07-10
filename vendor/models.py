@@ -1,5 +1,6 @@
 from datetime import time, date, datetime
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.text import slugify
 
@@ -18,6 +19,9 @@ class Vendor(models.Model):
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    rating = models.IntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
 
     def save(self, *args, **kwargs):
 
@@ -45,7 +49,6 @@ class Vendor(models.Model):
         current_opening_hours = OpeningHours.objects.filter(vendor=self, day=today)
         now = datetime.now()
         is_open = False
-
         for i in current_opening_hours:
             from_hour = i.from_hour
             to_hour = i.to_hour
@@ -57,7 +60,6 @@ class Vendor(models.Model):
                         is_open = True
                         break
                 except ValueError as e:
-                    print(f"Error parsing time: {e}")
                     continue
         return is_open
 

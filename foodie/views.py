@@ -9,6 +9,8 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        vendors = Vendor.objects.filter(is_approved=True, user__is_active=True)[:8]
+        vendors = Vendor.objects.filter(
+            is_approved=True, user__is_active=True, rating__gte=3
+        )[:8]
         context["vendors"] = vendors
         return context

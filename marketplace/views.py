@@ -5,7 +5,6 @@ from django.http import HttpResponse, JsonResponse, HttpRequest, Http404
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, TemplateView, View
 from django.contrib import messages
-
 from accounts.models import UserProfile
 from marketplace.context_processors import get_cart_counter, get_cart_amounts
 from marketplace.models import Cart
@@ -19,7 +18,7 @@ class MarketplaceView(ListView):
     template_name = "marketplace/listings.html"
     model = Vendor
     context_object_name = "vendors"
-    paginate_by = 3
+    paginate_by = 4
     ordering = "id"
 
     def get_context_data(self, **kwargs):
@@ -59,7 +58,7 @@ class MarketplaceDetailView(TemplateView):
             cart_items = Cart.objects.filter(user=self.request.user)
         else:
             cart_items = None
-        context["vendor"] = vendor
+        context["res"] = vendor
         context["categories"] = categories
         context["cart_items"] = cart_items
         context["opening_hours"] = opening_hours
@@ -214,7 +213,6 @@ def search(request):
             )
             & Q(is_available=True)
         ).values_list("vendor", flat=True)
-        print(fetch_vendors_by_fooditem)
         vendors = Vendor.objects.filter(
             Q(id__in=fetch_vendors_by_fooditem)
             & Q(

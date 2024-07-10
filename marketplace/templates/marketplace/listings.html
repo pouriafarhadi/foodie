@@ -1,6 +1,7 @@
 {% extends '_shared/_base.html' %}
 {% load thumbnail %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}
 	MarketPlace
 {% endblock %}
@@ -51,10 +52,15 @@
 												</div>
 												<div class="text-holder">
 													<div class="list-rating">
-														<div class="rating-star">
-															<span class="rating-box" style="width: 100%;"></span>
+														<div class="rating-box">
+															{% for i in ven.rating|timesrange %}
+															    {% if forloop.counter <= ven.rating %}
+															    	<i class="bi bi-star-fill"></i>
+															    {% else %}
+																    <i class="bi bi-star"></i>
+															    {% endif %}
+															{% endfor %}
 														</div>
-														<span class="reviews">(10)</span>
 													</div>
 													<div class="post-title">
 														<h5>

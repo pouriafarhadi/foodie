@@ -55,3 +55,34 @@ form#opening_hours select{
     justify-content: center;
 }
 
+@media only screen and (max-width: 480px){
+    a.get-start-btn {
+        display: block;
+        margin-top: 15px !important;
+        margin-left: 0 !important;
+    }
+    .main-search-bar{
+        padding-bottom: 50px !important;
+        background-position: right !important;
+    }
+    .user-dashboard{
+        width: 100% !important;
+    }
+    .menu-itam-holder .quantity {
+        right: 0 !important;
+    }
+
+    .table .opening_hours{
+        width: 100% !important;
+    }
+    .table td{
+        padding: 0.5rem !important;
+    }
+    .justify-content-center.row{
+        display: block;
+    }
+}
+
+table td, table th {
+    line-height: 1rem !important;
+}

@@ -7,3 +7,8 @@ register = template.Library()
 def half_string(value: str):
     n = value.split(".")
     return n[0]
+
+
+@register.filter(name="timesrange")
+def times(number):
+    return range(5)
